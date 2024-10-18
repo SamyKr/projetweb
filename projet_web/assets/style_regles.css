@@ -1,0 +1,63 @@
+/* Style spécifique pour la page des règles */
+body {
+    background-color: #f8f8f8; /* Fond léger */
+    color: #333; /* Couleur du texte */
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Hauteur de la vue */
+    padding: 20px; /* Espacement autour de la page */
+}
+
+/* Style pour l'en-tête */
+header {
+    background-color: #c8102e; /* Rouge vif */
+    color: #fff; /* Texte blanc */
+    padding: 20px;
+    width: 100%;
+    text-align: center; /* Centrage du texte */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Ombre légère */
+    margin-top: 20px; /* Espace au-dessus de l'en-tête */
+}
+
+/* Contenu de l'en-tête */
+.header-content {
+    display: flex; /* Utilise flexbox pour l'alignement */
+    justify-content: center; /* Centre le contenu horizontalement */
+    align-items: center; /* Centre le contenu verticalement */
+}
+
+/* Style pour le bouton de retour */
+.back-button {
+    position: absolute; /* Positionnement absolu pour le bouton */
+    left: 20px; /* Espace depuis la gauche */
+    color: #fff; /* Couleur blanche pour le texte */
+    text-decoration: none; /* Pas de soulignement */
+    font-size: 16px; /* Taille de police */
+}
+
+.back-button i {
+    margin-right: 5px; /* Espace entre l'icône et le texte */
+}
+
+.content {
+    max-width: 800px; /* Largeur maximale du contenu */
+    text-align: center; /* Centrage horizontal du texte dans le contenu */
+    padding: 20px; /* Espacement autour du contenu */
+    background-color: #fff; /* Fond blanc pour le contenu */
+    border-radius: 8px; /* Coins arrondis */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Ombre pour le contenu */
+}
+
+.content h2 {
+    margin-top: 20px;  /* Espace au-dessus de chaque titre */
+    margin-bottom: 10px; /* Espace en dessous de chaque titre */
+    color: #c8102e; /* Couleur rouge pour les titres */
+}
+
+.content p {
+    margin-bottom: 15px; /* Espace en dessous de chaque paragraphe */
+    line-height: 1.6; /* Hauteur de ligne pour améliorer la lisibilité */
+}
