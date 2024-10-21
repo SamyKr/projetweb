@@ -6,8 +6,10 @@
     <title>Mon Jeu</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.10.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="assets/style.css">
 </head>
+
 <body>
     <div id="app">
         <header class="bg-primary text-white text-center py-3">
@@ -17,26 +19,25 @@
             <div id="map" class="flex-grow-1"></div>
         </div>
         <div class="text-center my-2">
-        <button @click="toggleInventory" id="actionButton" class="btn btn-info">
-    {{ isInventoryVisible ? '⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️' : '⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️' }}
-</button>
+            <button @click="toggleInventory" id="actionButton" class="btn btn-info">
+                {{ isInventoryVisible ? '⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️' : '⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️' }}
+            </button>
         </div>
 
-        
         <transition name="fade">
             <div v-if="isInventoryVisible" class="inventory p-3">
                 <ul class="list-group">
-                    <li class="list-group-item">Objet 1</li>
-                    <li class="list-group-item">Objet 2</li>
-                    <li class="list-group-item">Objet 3</li>
-                    <li class="list-group-item">Objet 4</li>
-                    <li class="list-group-item">Objet 5</li>
+                    <!-- Utilisation de v-for pour rendre les objets dynamiquement -->
+                    <li class="list-group-item" v-for="(item, index) in items" :key="index">
+                        {{ item }}
+                    </li>
                 </ul>
             </div>
         </transition>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.10.1/mapbox-gl.js'></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/app.js"></script>
 </body>
