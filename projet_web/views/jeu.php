@@ -25,15 +25,15 @@
         </div>
 
         <transition name="fade">
-            <div v-if="isInventoryVisible" class="inventory p-3">
-                <ul class="list-group">
-                    <!-- Utilisation de v-for pour rendre les objets dynamiquement -->
-                    <li class="list-group-item" v-for="(item, index) in items" :key="index">
-                        {{ item }}
-                    </li>
-                </ul>
-            </div>
-        </transition>
+    <div v-if="isInventoryVisible" class="inventory p-3">
+        <ul class="list-group">
+            <li class="list-group-item" v-for="(item, index) in items" :key="index">
+                <img :src="item.src" :alt="item.alt" class="img-fluid" />
+            </li>
+        </ul>
+    </div>
+</transition>
+    
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
