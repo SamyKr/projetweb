@@ -2,13 +2,13 @@
 // config.php
 
 // Database connection constants
-define('DB_HOST', 'localhost'); // Change if your host is different
-define('DB_NAME', 'map'); // Replace with your database name
-define('DB_USER', 'postgres'); // Replace with your database username
-define('DB_PASS', 'postgres'); // Replace with your database password
+define('DB_HOST', 'localhost'); 
+define('DB_NAME', 'map'); 
+define('DB_USER', 'postgres'); 
+define('DB_PASS', 'postgres'); 
 
 try {
-    // Create a new PDO instance for PostgreSQL
+    
     $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME;
     $pdo = new PDO($dsn, DB_USER, DB_PASS);
     

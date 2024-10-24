@@ -63,43 +63,37 @@ new Vue({
       },
       initMap() {
         // Initialisation de la carte avec OpenStreetMap
-        const map = L.map('map').setView([26.031766, 50.510593], 13); // Positionnement de la carte (Sakhir)
+        const map = L.map('map').setView([7.429, 43.737], 13); 
   
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
   
-        // Chargement et ajout des données GeoJSON pour f1-locations.geojson
-        fetch('data/f1-locations.geojson')
-          .then(response => response.json())
-          .then(data => {
-            L.geoJSON(data, {
-              style: function (feature) {
-                return { color: 'red' };
-              },
-              onEachFeature: (feature, layer) => {
-                // Action lors du clic sur un élément
-                layer.on('click', () => {
-                  
-                  
-                  
-                  
-                  if (feature.properties && feature.properties.name) {
-                    if (this.inventory.includes(feature.properties.name)) {
-                      this.displayMessage(feature.properties.name);
-                    } else {
-                      this.addToInventory("F1");
-                    }
-                    layer.bindPopup("Nom du lieu : " + feature.properties.name).openPopup();
-                  } else {
-                    layer.bindPopup("Lieu sans nom").openPopup();
-                  }
-                });
-              }
-            }).addTo(map);
-          })
-          .catch(error => console.error('Erreur lors du chargement du fichier GeoJSON:', error));
+        
+
+
+        fetch('http://localhost/api.php/objets')  // Remplacer par le domaine ou localhost
+        .then(response => response.json())
+        .then(data => {
+          // Parcourir les objets récupérés depuis l'API
+          data.forEach(item => {
+            // Créer un marqueur pour chaque point avec les coordonnées lat, lon
+            const marker = L.marker([item.latitude, item.longitude]).addTo(map);
+            
+            // Ajouter un popup avec des informations
+            marker.bindPopup(`
+              <strong>Nom du lieu :</strong> ${item.name}<br>
+              <strong>Description :</strong> ${item.description}<br>
+              <strong>Zoom :</strong> ${item.zoom}<br>
+              <strong>Block :</strong> ${item.block}
+            `);
+          });
+        })
+        .catch(error => console.error('Erreur lors du chargement des données depuis l\'API:', error));
+
+           
+
   
     
         fetch('data/f1-circuits.geojson')
