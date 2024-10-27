@@ -6,8 +6,8 @@
     <title>Mon Jeu</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link href='https://api.mapbox.com/mapbox-gl-js/v2.10.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/popup.css">
 </head>
 
 <body>
@@ -37,7 +37,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-    <script src='https://api.mapbox.com/mapbox-gl-js/v2.10.1/mapbox-gl.js'></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/app.js"></script>
 </body>
