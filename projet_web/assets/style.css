@@ -1,4 +1,4 @@
-/* assets/style.css */
+
 html, body {
     height: 100%; /* S'assurer que le corps occupe toute la hauteur */
     margin: 0; /* Éliminer les marges par défaut */
@@ -14,14 +14,26 @@ html, body {
 }
 
 header {
-    background: rgba(0, 123, 255, 0.8); /* Couleur de fond semi-transparente */
+    background: red; /* Couleur de fond rouge */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Ombre portée pour le header */
+    display: flex; /* Utiliser flexbox pour le contenu du header */
+    justify-content: space-between; /* Espace entre les éléments */
+    align-items: center; /* Centrer verticalement */
+    padding: 0 1rem; /* Ajouter un peu de padding sur les côtés */
 }
 
 header h1 {
     margin: 0; /* Supprimer les marges par défaut */
     font-size: 2.5rem; /* Taille de police du titre */
+    flex-grow: 1; /* Permet au titre de prendre tout l'espace disponible */
+    text-align: center; /* Centrer le texte */
 }
+
+header label {
+    margin-left: auto; /* Aligne la case à cocher à droite */
+    color: white; /* Couleur du texte de la case à cocher */
+}
+
 
 .d-flex {
     flex: 1; /* Remplir toute la hauteur */
@@ -30,7 +42,7 @@ header h1 {
 
 #map {
     flex: 1; /* La carte prend tout l'espace restant */
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2); /* Bordure inférieure pour séparer le map de l'inventaire */
+    border-bottom: 2px solid rgba(255, 5, 5, 0.2); /* Bordure inférieure pour séparer le map de l'inventaire */
 }
 
 .inventory {
@@ -52,7 +64,7 @@ header h1 {
     margin-bottom: 1rem; /* Espacement inférieur du titre */
     text-align: center; /* Centrer le titre */
     font-size: 1.5rem; /* Taille de police du titre de l'inventaire */
-    color: #00bfff; /* Couleur du texte du titre */
+    color: #ff0000; /* Couleur du texte du titre */
     width: 100%; /* S'assurer que le titre occupe toute la largeur */
 }
 
@@ -92,7 +104,7 @@ header h1 {
 }
 
 #actionButton:hover {
-    background: rgba(0, 123, 255, 0.8); /* Changement de fond au survol */
+    background: rgba(255, 0, 0, 0.8); /* Changement de fond au survol */
     transform: scale(1.05); /* Effet de mise à l'échelle au survol */
 }
 

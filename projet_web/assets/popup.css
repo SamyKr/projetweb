@@ -1,36 +1,33 @@
-/* styles.css */
 .popup-content {
     font-family: 'Helvetica Neue', Arial, sans-serif; /* Utilisation d'une police moderne */
     padding: 15px; /* Augmenter le padding pour plus d'espace */
-    max-width: 250px; /* Largeur maximale augmentée pour un meilleur rendu */
+    max-width: 250px; /* Largeur maximale pour un meilleur rendu */
     background-color: rgba(255, 255, 255, 0.9); /* Fond légèrement transparent */
-   
     transition: transform 0.3s; /* Animation pour un léger effet de mouvement */
-  }
-  
-  .popup-content:hover {
+}
+
+.popup-content:hover {
     transform: scale(1.02); /* Léger agrandissement au survol */
-  }
-  
-  .popup-content b {
+}
+
+.popup-content b {
     color: #444; /* Couleur du texte un peu plus sombre pour le contraste */
     font-weight: bold; /* Texte en gras pour une meilleure lisibilité */
-  }
-  
-  .popup-content button {
-    background-color: #28a745; /* Couleur verte plus vive */
-    color: white;
+}
+
+.popup-content button {
+    background-color: #dc3545; /* Couleur rouge pour le bouton */
+    color: white; /* Couleur du texte */
     border: none;
     border-radius: 4px;
     padding: 10px 15px; /* Augmenter le padding pour un bouton plus grand */
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s; /* Ajout d'une transition pour le bouton */
-    margin-top: 8px; /* Espacement supérieur augmenté */
-    font-size: 14px; /* Taille de police augmentée pour plus de lisibilité */
-  }
-  
-  .popup-content button:hover {
-    background-color: #218838; /* Couleur verte plus foncée au survol */
+    margin-top: 8px; /* Espacement supérieur */
+    font-size: 14px; /* Taille de police */
+}
+
+.popup-content button:hover {
+    background-color: #c82333; /* Rouge foncé au survol */
     transform: scale(1.05); /* Agrandir légèrement le bouton au survol */
-  }
-  
+}

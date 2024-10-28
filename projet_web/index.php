@@ -110,34 +110,48 @@ Flight::route('GET /logout', function() {
     Flight::redirect('/login');
 });
 
-Flight::route('/objets', function() {
+Flight::route('GET /objets', function() {
     try {
         $pdo = Flight::get('pdo');
 
-        // ON RECUPERE LE ID DEPUIS LA REQUETE GET 
-        $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
-        // VERIFICATION SI LE ID EST VIDE
-        if (empty($ids)) {
-            Flight::json(['error' => 'Aucun ID fourni.'], 400);
-            return;
-        }
+        $idParam = isset($_GET['id']) ? $_GET['id'] : null; // On vérifie si on a demandé un ID spécifique
 
-        // ON PREPARE LA REQUETE SQL AVEC PLACEHOLDERS
-        $placeholders = rtrim(str_repeat('?,', count($ids)), ',');
-        $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description FROM objet WHERE id IN ($placeholders)");
-        // ON LA LANCE
-        $stmt->execute($ids);
-        $objets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($idParam !== null) { // On test si l'ID saisi est valide (un entier supérieur à 0)
+            if (!is_numeric($idParam) || (int)$idParam <= 0) {
+                Flight::json(['error' => 'ID non valide.'], 400);
+                return;
+            }
 
-        if (empty($objets)) {
-            Flight::json(['message' => 'Aucun objet trouvé.'], 404);
+            // On récupère les infos de l'ID saisi
+            $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code FROM objet WHERE id = ?");
+            $stmt->execute([$idParam]);
+            $objet = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($objet === false) {
+                Flight::json(['message' => 'Aucun objet trouvé.'], 404);
+            } else {
+                Flight::json($objet);
+            }
         } else {
-            Flight::json($objets);
+            // Si aucun ID n'a été saisi alors on renvoi les infos des objets qui permettent d'initialiser le jeu
+            $idsDepart = [1, 2, 3];
+            $placeholders = rtrim(str_repeat('?,', count($idsDepart)), ','); 
+            $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code FROM objet WHERE id IN ($placeholders)");
+            $stmt->execute($idsDepart);
+            $objets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($objets)) {
+                Flight::json(['message' => 'Aucun objet trouvé.'], 404);
+            } else {
+                Flight::json($objets);
+            }
         }
     } catch (PDOException $e) {
         Flight::json(['error' => 'Erreur de base de données : ' . $e->getMessage()], 500);
     }
 });
+
+
 
 
 
