@@ -12,12 +12,20 @@
 
 <body>
     <div id="app">
-        <header class="bg-primary text-white text-center py-3">
-            <h1>Nom du Jeu</h1>
+        <header class="bg-danger text-white text-center py-3">
+            <h1>Drive to Escape</h1>
+            <div>
+                <label>
+                    <input type="checkbox" @change="toggleHeatmap" />
+                    Triche ?
+                </label>
+            </div>
         </header>
+        
         <div class="d-flex">
             <div id="map" class="flex-grow-1"></div>
         </div>
+        
         <div class="text-center my-2">
             <button @click="toggleInventory" id="actionButton" class="btn btn-info">
                 {{ isInventoryVisible ? '⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️' : '⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️' }}
@@ -25,15 +33,19 @@
         </div>
 
         <transition name="fade">
-    <div v-if="isInventoryVisible" class="inventory p-3">
-        <ul class="list-group">
-            <li class="list-group-item" v-for="(item, index) in items" :key="index">
-                <img :src="item.src" :alt="item.alt" class="img-fluid" />
-            </li>
-        </ul>
-    </div>
-</transition>
-    
+            <div v-if="isInventoryVisible" class="inventory p-3">
+                <ul class="list-group">
+                    <li class="list-group-item" 
+                        v-for="(item, index) in items" 
+                        :key="index" 
+                        :style="{ backgroundColor: item.backgroundColor }" 
+                        @click="selectItem(index)" 
+                    >
+                        <img :src="item.src" :alt="item.alt" class="img-fluid" :style="{ border: item.border }" />
+                    </li>
+                </ul>
+            </div>
+        </transition>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
