@@ -18,6 +18,8 @@ new Vue({
     };
   },
 
+  // TEST 
+
   methods: {
 
     toggleInventory() { 
