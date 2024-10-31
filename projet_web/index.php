@@ -124,7 +124,7 @@ Flight::route('/objets', function() {
 
         // ON PREPARE LA REQUETE SQL AVEC PLACEHOLDERS
         $placeholders = rtrim(str_repeat('?,', count($ids)), ',');
-        $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description FROM objet WHERE id IN ($placeholders)");
+        $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code FROM objet WHERE id IN ($placeholders)");
         // ON LA LANCE
         $stmt->execute($ids);
         $objets = $stmt->fetchAll(PDO::FETCH_ASSOC);

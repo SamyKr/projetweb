@@ -86,6 +86,8 @@ new Vue({
   },
 
 
+  
+
   addToInventory(item) { // Gère l'ajout d'un élément à l'inventaire
       item = parseInt(item, 10); // Convertir en nombre entier
       const emptyIndex = this.inventory.indexOf("");
@@ -102,6 +104,13 @@ new Vue({
       if (objectToAdd.block !== null && objectToAdd.block !== this.selectedItem.id) {
         alert(`L'objet ${objectToAdd.nom_objet} est bloqué et ne peut pas être ajouté à l'inventaire. Débloquez-le d'abord.`);
         return; // Ne pas ajouter l'objet
+      }
+
+      else if (objectToAdd.code !== null) {
+      
+        const code = objectToAdd.code;
+
+      return;
       }
 
      
@@ -177,6 +186,27 @@ selectItem(index) {
 },
 
 
+popup(description, code, id, marker) { 
+  console.log("Objet de la popup :", code);
+  console.log("ID de l'objet :", id);
+
+  if (code !== null) {
+    return `
+      <div class="popup-content">
+        <b>${description}</b><br>
+        <button onclick="(function() { addToInventory_Remove('${id}', '${encodeURIComponent(marker)}') })()">Ajouter à l'inventaire</button>
+        <input type="text" v-model="inputCode" placeholder="Entrez le code"> <!-- Liaison avec inputCode -->
+        <button onclick="(function() { checkCode('${id}', '${code}') })()">Valider</button>
+      </div>`;
+  } else {
+    return `<div class="popup-content">
+      <b>${description}</b><br>
+      <button onclick="(function() { addToInventory_Remove('${id}', '${encodeURIComponent(marker)}') })()">Ajouter à l'inventaire</button>
+    </div>`;
+  }
+}
+,
+
 
 
 
@@ -223,23 +253,17 @@ selectItem(index) {
             // ON MET LES IMAGES SUR LA CARTE
             const marker = L.marker(latLng, { icon: customIcon }).addTo(map);
 
+            console.log("code", obj.code);
 
-
-            
-            // Créer le contenu de la popup avec un bouton
-            const popupContent = `
-          <div class="popup-content">
-            <b>${obj.description}</b><br>
-            <button onclick="(function() { addToInventory_Remove('${obj.id}', '${encodeURIComponent(marker)}') })()">Ajouter à l'inventaire</button>
-          </div>`;
-
-            
-          // Lier le contenu de la popup au marqueur
+            const popupContent = this.popup(obj.description, obj.code, obj.id,marker);
             marker.bindPopup(popupContent);
+
+            
+
 
           
           // ON ENREGISTRE LES IMAGES POUR LE CONTROLE DE VISIBILITE (ET SUREMENT POUR LE BLOQUAGE APRÈS ET L'INVENTAIRE)
-          this.elements_visible.push({marker, zoom: obj.zoom, block: obj.block, id: obj.id, nom_objet: obj.nom_objet });
+          this.elements_visible.push({marker, zoom: obj.zoom, block: obj.block, id: obj.id, nom_objet: obj.nom_objet, code: obj.code});
 
           
 
