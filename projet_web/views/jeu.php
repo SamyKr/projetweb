@@ -12,7 +12,7 @@
 
 <body>
     <div id="app">
-        <header class="bg-danger text-white text-center py-3">
+            <header class="bg-danger text-white text-center py-3">
             <h1>Drive to Escape</h1>
             <div>
                 <label>
@@ -21,28 +21,29 @@
                 </label>
             </div>
         </header>
-        
         <div class="d-flex">
             <div id="map" class="flex-grow-1"></div>
         </div>
-        
         <div class="text-center my-2">
             <button @click="toggleInventory" id="actionButton" class="btn btn-info">
                 {{ isInventoryVisible ? '⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️' : '⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️' }}
             </button>
         </div>
 
-        <transition name="fade">
-            <div v-if="isInventoryVisible" class="inventory p-3">
-                <ul class="list-group">
-                    <li class="list-group-item" 
-                        v-for="(item, index) in items" 
-                        :key="index" 
-                        :style="{ backgroundColor: item.backgroundColor }" 
-                        @click="selectItem(index)" 
-                    >
-                        <img :src="item.src" :alt="item.alt" class="img-fluid" :style="{ border: item.border }" />
-                    </li>
+                    <transition name="fade">
+                        <div v-if="isInventoryVisible" class="inventory p-3">
+                        <ul class="list-group">
+            <li class="list-group-item" 
+                v-for="(item, index) in items" 
+                :key="index" 
+                :style="{ backgroundColor: item.backgroundColor }" 
+                @click="selectItem(index)" 
+            >
+                <img :src="item.src" :alt="item.alt" class="img-fluid" :style="{ border: item.border }" />
+            </li>
+</ul>
+
+
                 </ul>
             </div>
         </transition>

@@ -2,6 +2,7 @@ new Vue({
   el: '#app',
   data() {
     return {
+      map: null, // Variable pour la carte
       isInventoryVisible: true, // Variable pour gérer l'affichage ou non de l'inventaire
       isHeatmapVisible: false, // Variable pour gérer l'affichage ou non de la carte de triche
       items: [ // Inventaire visuel de base
@@ -11,9 +12,10 @@ new Vue({
         { src: 'data/image/inventaire.png', alt: 'Emplacement vide 4' },
       ],
       inventory: ["", "", "", ""], // Inventaire de base
+      inputCode: "", // Code entré par l'utilisateur
       elements_visible: [], // Images chargées de base
+      loadedObjectIds: [], // ID des objets chargés pour la carte de chaleur  
       wmsLayer: null, // Variable pour initialiser la carte de triche
-      loadedObjectIds: [], // Id des objets chargés et présent sur la carte
       selectedItem: {
         index: null,
         id: null,
@@ -89,58 +91,52 @@ new Vue({
   
 
   addToInventory(item) { // Gère l'ajout d'un élément à l'inventaire
-      item = parseInt(item, 10); // Convertir en nombre entier
-      const emptyIndex = this.inventory.indexOf("");
-      
+    item = parseInt(item, 10); // Convertir en nombre entier
+    let emptyIndex = this.inventory.indexOf(""); // Initialiser emptyIndex
+    const objectToAdd = this.elements_visible.find(i => i.id === item);
 
-      const objectToAdd = this.elements_visible.find(i => i.id === item);
-        if (!objectToAdd) {
+    if (!objectToAdd) {
         alert("Objet non trouvé !");
         return;
     }
-    
 
-      // Vérifiez si l'objet est bloqué ou si l'ID de selectedItem correspond à l'ID de blocage de l'objet
-      if (objectToAdd.block !== null && objectToAdd.block !== this.selectedItem.id) {
+    // Vérifiez si l'objet est bloqué ou si l'ID de selectedItem correspond à l'ID de blocage de l'objet
+    if (objectToAdd.block !== null && objectToAdd.block !== this.selectedItem.id) {
         alert(`L'objet ${objectToAdd.nom_objet} est bloqué et ne peut pas être ajouté à l'inventaire. Débloquez-le d'abord.`);
-        return; // Ne pas ajouter l'objet
-      }
+        return; 
+    }
 
-      else if (objectToAdd.code !== null) {
-      
-        const code = objectToAdd.code;
+    if (emptyIndex !== -1) {
+        const unlockerIndex = this.inventory.findIndex(item => item.id === this.selectedItem.id);
+        
+        console.log("avant suppression :", this.inventory);
+        // Si un objet à remplacer a été trouvé, le remplacer par une chaîne vide
+        if (unlockerIndex !== -1) {
+            this.$set(this.inventory, unlockerIndex, ""); // Remplacer l'objet par une chaîne vide
+            console.log("après suppression :", this.inventory);
+        }
 
-      return;
-      }
+        // Mettre à jour emptyIndex après la suppression
+        emptyIndex = this.inventory.indexOf("");
 
-     
-  
-      if (emptyIndex !== -1) {
-          // Ajouter l'objet à l'inventaire
-          this.$set(this.inventory, emptyIndex, {
+        // Ajouter l'objet à l'inventaire à l'index vide
+        this.$set(this.inventory, emptyIndex, {
             nom_objet: objectToAdd.nom_objet,
             id: objectToAdd.id
         });
-        
-          this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gere les images)
-          
 
+        this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
+        this.deleteObject(item); // Supprimer l'objet de la carte
 
-          //this.images.splice(this.images.indexOf(objectToAdd), 1); // On retire l'objet des images
-          
-          // Mettre à jour la carte de chaleur
-          this.loadHeatmapLayer(); 
-  
-          // On remet à Null l'objet sélectionné si on a réussi à l'ajouter
-          if (objectToAdd.block == this.selectedItem.id){
-          this.selectedItem = { index: null, id: null };
-          }
-  
-      } else {
-          alert("L'inventaire est plein !");
-      }
-
-  },  
+        // Mettre à jour la carte de chaleur
+        this.loadHeatmapLayer(); 
+        if (objectToAdd.block == this.selectedItem.id) {
+            this.selectedItem = { index: null, id: null };
+        }
+    } else {
+        alert("L'inventaire est plein !");
+    }
+},  
 
 // SELECTIONNER UN OBJET DANS L'INVENTAIRE
 
@@ -186,23 +182,32 @@ selectItem(index) {
 },
 
 
-popup(description, code, id, marker) { 
-  console.log("Objet de la popup :", code);
-  console.log("ID de l'objet :", id);
 
-  if (code !== null) {
-    return `
-      <div class="popup-content">
-        <b>${description}</b><br>
-        <button onclick="(function() { addToInventory_Remove('${id}', '${encodeURIComponent(marker)}') })()">Ajouter à l'inventaire</button>
-        <input type="text" v-model="inputCode" placeholder="Entrez le code"> <!-- Liaison avec inputCode -->
-        <button onclick="(function() { checkCode('${id}', '${code}') })()">Valider</button>
-      </div>`;
+
+checkCode(id, code) {
+  id = parseInt(id, 10);
+  console.log("ID de l'objet à débloquer :", code);
+  console.log("codeendur : ",inputCode);
+
+  if (inputCode === code) {
+    inputCode = "";
+    const currentElt = this.elements_visible.find(i => i.id === id);
+
+    if (currentElt) {
+      const eltADebloquer = this.elements_visible.find(i => i.block === currentElt.id);
+
+      if (eltADebloquer) {
+        eltADebloquer.block = null;
+      }
+
+      this.Ajout_objet([4, 5, 6, 7]);
+      alert("Code correct !");
+      this.deleteObject(id);
+    } else {
+      console.warn("Élément non trouvé avec l'ID :", id);
+    }
   } else {
-    return `<div class="popup-content">
-      <b>${description}</b><br>
-      <button onclick="(function() { addToInventory_Remove('${id}', '${encodeURIComponent(marker)}') })()">Ajouter à l'inventaire</button>
-    </div>`;
+    alert("Code incorrect, veuillez réessayer.");
   }
 }
 ,
@@ -211,78 +216,98 @@ popup(description, code, id, marker) {
 
 
 
-// AFFICHAGE DES ALERTES SPECIFIQUES
+// AFFICHAGE DES MESSAGES SPECIFIQUES
   
 
     displayMessage(item) { // Normalement elle ne sert à rien
       alert(`L'élément "${item}" est déjà dans l'inventaire !`);
     },
 
-
+    popup(description, code, id) { // Fonction pour créer le contenu de la popup
+      inputCode = code;
+      if (code !== null) {
+        return `
+          <div class="popup-content">
+            <b>${description}</b><br>
+            <input type="text" placeholder="Entrez le code" id="code_user">
+            <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value) })()">Valider</button>
+          </div>`;
+      } 
+      else {
+        return `<div class="popup-content">
+          <b>${description}</b><br>
+          <button onclick="(function() { addToInventory('${id}') })()">Ajouter à l'inventaire</button>
+        </div>`;
+      }
+    },
   
 
 
     
     // On va chercher un objets selon son ID dans la BDD pour l'ajouter sur la map
   
-    Ajout_objet(map, ids) { // FONCTION POUR AJOUTER LES IMAGES SUR LA CARTE AVEC LES IDS DES OBJETS
-      const params = new URLSearchParams({ ids: ids.join(',') }); // Convertir la liste d'IDs en chaîne
-    
-      fetch(`/objets?${params}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok: ' + response.statusText);
-          }
-          return response.json(); // Récupérer les données en JSON
-        })
-        .then(data => {
-          console.log("Données JSON analysées:", data);
-    
-          data.forEach(obj => {
-            const latLng = [obj.latitude, obj.longitude]; // Format correct pour L.marker
-            const imageSrc = `data/image/${obj.nom_objet}.png`;
-    
-            // Créer une icône personnalisée
-            const customIcon = L.icon({
-              iconUrl: imageSrc,
-              iconSize: [100, 100], 
-              iconAnchor: [25, 50], 
-              popupAnchor: [0, -40] 
-            });
-    
-            // ON MET LES IMAGES SUR LA CARTE
-            const marker = L.marker(latLng, { icon: customIcon }).addTo(map);
+  // Fonction pour ajouter les objets avec stockage de l'ID du marqueur
+Ajout_objet(ids) {
+  const params = new URLSearchParams({ ids: ids.join(',') }); 
+  
+  fetch(`/objets?${params}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("Données JSON analysées:", data);
 
-            console.log("code", obj.code);
+      data.forEach(obj => {
+        const latLng = [obj.latitude, obj.longitude];
+        const imageSrc = `data/image/${obj.nom_objet}.png`;
 
-            const popupContent = this.popup(obj.description, obj.code, obj.id,marker);
-            marker.bindPopup(popupContent);
-
-            
-
-
-          
-          // ON ENREGISTRE LES IMAGES POUR LE CONTROLE DE VISIBILITE (ET SUREMENT POUR LE BLOQUAGE APRÈS ET L'INVENTAIRE)
-          this.elements_visible.push({marker, zoom: obj.zoom, block: obj.block, id: obj.id, nom_objet: obj.nom_objet, code: obj.code});
-
-          
-
+        const customIcon = L.icon({
+          iconUrl: imageSrc,
+          iconSize: [100, 100], 
+          iconAnchor: [25, 50], 
+          popupAnchor: [0, -40] 
         });
-      })
-      .catch(error => console.error('Erreur lors du chargement des objets:', error));
-              },
+
+        const marker = L.marker(latLng, { icon: customIcon }).addTo(this.map);
+      
+
+        const popupContent = this.popup(obj.description, obj.code, obj.id);
+        marker.bindPopup(popupContent);
+
+        this.elements_visible.push({
+          marker,
+          zoom: obj.zoom, 
+          block: obj.block, 
+          id: obj.id, 
+          nom_objet: obj.nom_objet, 
+          code: obj.code
+        });
+      });
+    })
+    .catch(error => console.error('Erreur lors du chargement des objets:', error));
+},
 
 
+deleteObject(id) {
+  element= this.elements_visible.find(i => i.id === id);
+  this.map.removeLayer(element.marker);
+  //supprimer de elements_visible
+  const index = this.elements_visible.findIndex(i => i.id === id);
+  this.elements_visible.splice(index, 1);
 
-    addToInventory_Remove(item, marker) { // Gère l'ajout d'un élément à l'inventaire
-      this.addToInventory(item);
-      //this.map.removeLayer(marker); // On retire le marqueur de la carte
-    },
+},
+
+
+    
+    
 
     
  
     initMap() { // on crée le fond de carte et on ajoute les objets de départ
-      const map = L.map('map').setView([43.737, 7.429], 10); 
+      const map = L.map('map').setView([52.389, 4.541], 10); 
       this.map = map; 
   
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -291,7 +316,7 @@ popup(description, code, id, marker) {
       }).addTo(map);
   
       const objetDepart = [1, 2, 3];
-      this.Ajout_objet(map, objetDepart);
+      this.Ajout_objet(objetDepart);
   
       fetch('data/f1-circuits.geojson')
         .then(response => response.json())
@@ -332,7 +357,8 @@ popup(description, code, id, marker) {
 
   mounted() { // On "monte" la carte
     this.initMap();
-    window.addToInventory_Remove = this.addToInventory_Remove.bind(this); // METHODE GLOBALE
+    window.addToInventory = this.addToInventory.bind(this); // METHODE GLOBALE
+    window.checkCode = this.checkCode.bind(this); // METHODE GLOBALE
 
   }
 });
