@@ -15,8 +15,7 @@ $conn = pg_connect($connection_string);
 if (!$conn) {
     exit("Erreur de connexion à la base de données : " . pg_last_error());
 } else {
-    // Uncomment this line if you want to see a success message
-    // echo "Connecté à la base de données avec succès.\n"; // Message de succès
+
 }
 
 session_start();
@@ -103,11 +102,17 @@ Flight::route('/objets', function() {
         // Récupérer la connexion depuis Flight
         $conn = Flight::get('conn');
 
-        // ON RECUPERE LE ID DEPUIS LA REQUETE GET 
+        // ON RECUPERE LES IDS DEPUIS LA REQUETE GET 
         $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
+
         // VERIFICATION SI LE ID EST VIDE
         if (empty($ids)) {
-            Flight::json(['error' => 'Aucun ID fourni.'], 400);
+            $query= "SELECT id, nom_objet, ST_X(position) as longitude, ST_Y(position) as latitude, zoom, block, description, code 
+            FROM objet 
+            WHERE depart = true";
+            $result = pg_query($conn, $query);
+            $objets = pg_fetch_all($result);
+            Flight::json($objets); // Envoie la réponse et arrête l'exécution
             return;
         }
 
@@ -128,13 +133,16 @@ Flight::route('/objets', function() {
 
         if (empty($objets)) {
             Flight::json(['message' => 'Aucun objet trouvé.'], 404);
+            return;
         } else {
             Flight::json($objets);
+            return;
         }
     } catch (Exception $e) {
         Flight::json(['error' => 'Erreur lors de la requête : ' . $e->getMessage()], 500);
     }
 });
+
 
 
 Flight::start();

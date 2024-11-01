@@ -12,7 +12,6 @@ new Vue({
         { src: 'data/image/inventaire.png', alt: 'Emplacement vide 4' },
       ],
       inventory: ["", "", "", ""], // Inventaire de base
-      inputCode: "", // Code entré par l'utilisateur
       elements_visible: [], // Images chargées de base
       loadedObjectIds: [], // ID des objets chargés pour la carte de chaleur  
       wmsLayer: null, // Variable pour initialiser la carte de triche
@@ -186,12 +185,10 @@ selectItem(index) {
 
 checkCode(id, code) {
   //id = parseInt(id, 10);
-  console.log("ID de l'objet à débloquer :", code);
-  console.log("codeendur : ",inputCode);
 
-  if (inputCode === code) {
-    inputCode = "";
-    const currentElt = this.elements_visible.find(i => i.id === id);
+  currentElt = this.elements_visible.find(i => i.id === id);
+
+  if (currentElt.code === code) {
     
 
 
@@ -227,7 +224,10 @@ checkCode(id, code) {
     },
 
     popup(description, code, id) { // Fonction pour créer le contenu de la popup
-      inputCode = code;
+
+
+
+      console.log(typeof qqc);
       if (code !== null) {
         return `
           <div class="popup-content">
@@ -246,20 +246,33 @@ checkCode(id, code) {
   
 
 
-    
-    // On va chercher un objets selon son ID dans la BDD pour l'ajouter sur la map
+    start_chrono(){ // Fonction pour démarrer le chrono qui est dans le html 
+      var start = new Date();
+      var time = start.getTime();
+      console.log(time);
+      return time;
+    },
+
+    stop_chrono(){
+    // verifier si un id est dans this.element.visibile
+    },
+
+    // mettre a jour la vue de base et afficher le grand texte de presentation + bouton pour commencer qui lance chrono et qui ferme popup
   
   // Fonction pour ajouter les objets avec stockage de l'ID du marqueur
-Ajout_objet(ids) {
-  const params = new URLSearchParams({ ids: ids.join(',') }); 
-  
-  fetch(`/objets?${params}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response.statusText);
-      }
-      return response.json();
-    })
+   Ajout_objet(ids) {
+    // Vérifier si ids est nul ou vide
+    const url = ids && ids.length > 0 
+      ? `/objets?${new URLSearchParams({ ids: ids.join(',') })}`
+      : '/objets';
+    
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();
+      })
     .then(data => {
       console.log("Données JSON analysées:", data);
 
@@ -279,6 +292,9 @@ Ajout_objet(ids) {
 
         const popupContent = this.popup(obj.description, obj.code, obj.id);
         marker.bindPopup(popupContent);
+
+        this.loadedObjectIds.push(obj.id); // ajout a la carte de chaleur
+        this.loadHeatmapLayer();
 
         this.elements_visible.push({
           marker,
@@ -300,6 +316,9 @@ deleteObject(id) {
   //supprimer de elements_visible
   const index = this.elements_visible.findIndex(i => i.id === id);
   this.elements_visible.splice(index, 1);
+  // supprimer dans la carte de chaleur
+  this.loadedObjectIds.splice(index, 1);
+  this.loadHeatmapLayer();
 
 },
 
@@ -318,8 +337,8 @@ deleteObject(id) {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       }).addTo(map);
   
-      const objetDepart = [1, 2, 3];
-      this.Ajout_objet(objetDepart);
+     
+      this.Ajout_objet(); // On ajoute les objets de DEPART
   
       fetch('data/f1-circuits.geojson')
         .then(response => response.json())
