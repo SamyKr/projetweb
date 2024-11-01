@@ -19,6 +19,9 @@ new Vue({
         index: null,
         id: null,
       },
+      elapsedTime: 0,
+      interval: null,
+      isRunning: false
     };
   },
 
@@ -61,7 +64,7 @@ new Vue({
           this.wmsLayer.setParams({ CQL_FILTER: `id IN (${ids})` }); // Mettre à jour le filtre
         }
       } else {
-        if (this.wmsLayer) {
+        if (this.wmsLayer && !this.isHeatmapVisible) {
           this.map.removeLayer(this.wmsLayer); // Retirer la couche de chaleur si aucun objet
           this.wmsLayer = null; // Réinitialiser la référence
         }
@@ -89,10 +92,11 @@ new Vue({
 
   
 
-  addToInventory(item) { // Gère l'ajout d'un élément à l'inventaire
+  addToInventory(item, deblock) { // Gère l'ajout d'un élément à l'inventaire
     //item = parseInt(item, 10); // Convertir en nombre entier
     let emptyIndex = this.inventory.indexOf(""); // Initialiser emptyIndex
     const objectToAdd = this.elements_visible.find(i => i.id === item);
+
 
     if (!objectToAdd) {
         alert("Objet non trouvé !");
@@ -127,8 +131,18 @@ new Vue({
         this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
         this.deleteObject(item); // Supprimer l'objet de la carte
 
-        // Mettre à jour la carte de chaleur
-        this.loadHeatmapLayer(); 
+        //// Condition temporaire pour tester la fin du jeu
+        if (this.inventory.some(item => item.id === '10')) {
+          this.stopChrono();
+        }
+
+        console.log("ici", typeof this.stringToArray(deblock))
+        if (deblock !== 'null') {
+          this.Ajout_objet(this.stringToArray(deblock));
+        }
+
+
+        
         if (objectToAdd.block == this.selectedItem.id) {
             this.selectedItem = { index: null, id: null };
         }
@@ -183,24 +197,21 @@ selectItem(index) {
 
 
 
-checkCode(id, code) {
+checkCode(id, code, deblock) {
   //id = parseInt(id, 10);
 
   currentElt = this.elements_visible.find(i => i.id === id);
 
   if (currentElt.code === code) {
     
-
-
-
-
     if (currentElt) {
       const eltADebloquer = this.elements_visible.find(i => i.block === currentElt.id);
       if (eltADebloquer) {
         eltADebloquer.block = null;
       }
 
-      this.Ajout_objet([4, 5, 6, 7]);
+    
+
       alert("Code correct !");
       this.deleteObject(id);
     } else {
@@ -209,6 +220,12 @@ checkCode(id, code) {
   } else {
     alert("Code incorrect, veuillez réessayer.");
   }
+
+  if (deblock !== 'null') {
+    this.Ajout_objet(this.stringToArray(deblock));
+  }
+
+  
 }
 ,
 
@@ -223,48 +240,64 @@ checkCode(id, code) {
       alert(`L'élément "${item}" est déjà dans l'inventaire !`);
     },
 
-    popup(description, code, id) { // Fonction pour créer le contenu de la popup
+    startChrono() {
+        this.elapsedTime = 0; // Réinitialiser le temps
+        this.timerInterval = setInterval(() => {
+            this.elapsedTime += 0.1; // Incrémenter de 0,1 seconde
+        }, 100); // Appeler toutes les 100 millisecondes (0,1 seconde)
+        this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
+        this.deleteObject('99'); // Supprimer l'objet de la carte
+
+    },
 
 
+    stopChrono() {
+        clearInterval(this.timerInterval); // Arrêter l'intervalle du chronomètre
+        this.timerInterval = null; // Réinitialiser l'ID de l'intervalle
+    },
 
-      console.log(typeof qqc);
+
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        const tenths = Math.floor((seconds % 1) * 10); // Calcule les dixièmes de seconde
+        return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}:${tenths}`;
+    },
+
+
+  popup(description, code, id, deblock) {
       if (code !== null) {
-        return `
-          <div class="popup-content">
-            <b>${description}</b><br>
-            <input type="text" placeholder="Entrez le code" id="code_user">
-            <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value) })()">Valider</button>
-          </div>`;
+          return `
+              <div class="popup-content">
+                  <b>${description}</b><br>
+                  <input type="text" placeholder="Entrez le code" id="code_user">
+                  <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value, '${deblock}') })()">Valider</button>
+              </div>`;
+      } 
+      if (id === '99') {
+          return `
+              <div class="popup-content">
+                  <b>${description}</b><br>
+                  <button onclick="(function() { startChrono() })()">Commencer la partie</button>         
+              </div>`;
       } 
       else {
-        return `<div class="popup-content">
-          <b>${description}</b><br>
-          <button onclick="(function() { addToInventory('${id}') })()">Ajouter à l'inventaire</button>
-        </div>`;
+          return `
+              <div class="popup-content">
+                  <b>${description}</b><br>
+                  <button onclick="(function() { addToInventory('${id}', '${deblock}') })()">Ajouter à l'inventaire</button>
+              </div>`;
       }
-    },
-  
+  },
 
 
-    start_chrono(){ // Fonction pour démarrer le chrono qui est dans le html 
-      var start = new Date();
-      var time = start.getTime();
-      console.log(time);
-      return time;
-    },
 
-    stop_chrono(){
-    // verifier si un id est dans this.element.visibile
-    },
-
-    // mettre a jour la vue de base et afficher le grand texte de presentation + bouton pour commencer qui lance chrono et qui ferme popup
-  
   // Fonction pour ajouter les objets avec stockage de l'ID du marqueur
    Ajout_objet(ids) {
-    // Vérifier si ids est nul ou vide
-    const url = ids && ids.length > 0 
-      ? `/objets?${new URLSearchParams({ ids: ids.join(',') })}`
-      : '/objets';
+
+    const url = Array.isArray(ids) && ids.length > 0 
+        ? `/objets?${new URLSearchParams({ ids: ids.join(',') })}`
+        : '/objets';
     
     fetch(url)
       .then(response => {
@@ -290,11 +323,12 @@ checkCode(id, code) {
         const marker = L.marker(latLng, { icon: customIcon }).addTo(this.map);
       
 
-        const popupContent = this.popup(obj.description, obj.code, obj.id);
+        const popupContent = this.popup(obj.description, obj.code, obj.id, obj.deblock);
         marker.bindPopup(popupContent);
 
         this.loadedObjectIds.push(obj.id); // ajout a la carte de chaleur
-        this.loadHeatmapLayer();
+        this.loadHeatmapLayer(); //MaJ carte de chaleur
+
 
         this.elements_visible.push({
           marker,
@@ -302,13 +336,23 @@ checkCode(id, code) {
           block: obj.block, 
           id: obj.id, 
           nom_objet: obj.nom_objet, 
-          code: obj.code
+          code: obj.code,
+          depart: obj.depart,
+          deblock: obj.deblock
         });
       });
     })
     .catch(error => console.error('Erreur lors du chargement des objets:', error));
 },
 
+stringToArray(str) {
+  // Vérifie si str est une chaîne et qu'elle commence par '{' et finit par '}'
+  if (typeof str === 'string' && str.startsWith('{') && str.endsWith('}')) {
+      // Supprime les accolades et sépare les valeurs par une virgule
+      return str.slice(1, -1).split(',').map(Number); // Convertit les chaînes en nombres
+  }
+  return []; // Retourne un tableau vide si la chaîne n'est pas au bon format
+},
 
 deleteObject(id) {
   element= this.elements_visible.find(i => i.id === id);
@@ -329,7 +373,7 @@ deleteObject(id) {
     
  
     initMap() { // on crée le fond de carte et on ajoute les objets de départ
-      const map = L.map('map').setView([52.389, 4.541], 10); 
+      const map = L.map('map').setView([48.8566, 2.3522], 10); 
       this.map = map; 
   
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -381,6 +425,7 @@ deleteObject(id) {
     this.initMap();
     window.addToInventory = this.addToInventory.bind(this); // METHODE GLOBALE
     window.checkCode = this.checkCode.bind(this); // METHODE GLOBALE
+    window.startChrono = this.startChrono.bind(this); // METHODE GLOBALE
 
   }
 });

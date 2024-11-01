@@ -107,7 +107,7 @@ Flight::route('/objets', function() {
 
         // VERIFICATION SI LE ID EST VIDE
         if (empty($ids)) {
-            $query= "SELECT id, nom_objet, ST_X(position) as longitude, ST_Y(position) as latitude, zoom, block, description, code 
+            $query= "SELECT id, nom_objet, ST_X(position) as longitude, ST_Y(position) as latitude, zoom, block, description, code, depart, deblock 
             FROM objet 
             WHERE depart = true";
             $result = pg_query($conn, $query);
@@ -118,7 +118,7 @@ Flight::route('/objets', function() {
 
         // ON PREPARE LA REQUETE SQL AVEC PLACEHOLDERS
         $placeholders = implode(',', array_map(fn($index) => '$' . ($index + 1), array_keys($ids)));
-        $query = "SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code 
+        $query = "SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code, depart, deblock 
                   FROM objet 
                   WHERE id IN ($placeholders)";
 

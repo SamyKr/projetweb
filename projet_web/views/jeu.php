@@ -20,6 +20,11 @@
                     Triche ?
                 </label>
             </div>
+
+            <div class="mt-2">
+                <span>Temps écoulé : {{ formatTime(elapsedTime) }}</span> 
+            </div>
+
         </header>
         <div class="d-flex">
             <div id="map" class="flex-grow-1"></div>
