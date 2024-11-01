@@ -9,38 +9,33 @@ define('DB_NAME', 'map');
 define('DB_USER', 'postgres'); 
 define('DB_PASS', 'postgres'); 
 
-try {
-    $dsn = "pgsql:host=" . DB_HOST . ";dbname=" . DB_NAME;
-    $pdo = new PDO($dsn, DB_USER, DB_PASS);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+$connection_string = "host=" . DB_HOST . " dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
+$conn = pg_connect($connection_string);
 
-    // Set $pdo as a global service with Flight
-    Flight::set('pdo', $pdo);
-
-    
-} catch (PDOException $e) {
-    
-    exit;
+if (!$conn) {
+    exit("Erreur de connexion à la base de données : " . pg_last_error());
+} else {
+    // Uncomment this line if you want to see a success message
+    // echo "Connecté à la base de données avec succès.\n"; // Message de succès
 }
 
 session_start();
 
-// Example route using global 'pdo' service
+Flight::set('conn', $conn);
+
+// Example route using global 'conn' service
 Flight::route('GET /', function() {
     Flight::render('jeu');
 });
 
-Flight::route('/login', function() {
+Flight::route('/login', function() use ($conn) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail = $_POST['mail'];
         $password = $_POST['password'];
 
-        // Access the global 'pdo' service
-        $pdo = Flight::get('pdo');
-        $stmt = $pdo->prepare("SELECT * FROM joueurs WHERE mail = ?");
-        $stmt->execute([$mail]);
-        $user = $stmt->fetch();
+        // Access the global 'conn' service
+        $result = pg_query_params($conn, "SELECT * FROM joueurs WHERE mail = $1", [$mail]);
+        $user = pg_fetch_assoc($result);
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
@@ -55,7 +50,7 @@ Flight::route('/login', function() {
     }
 });
 
-Flight::route('/register', function() {
+Flight::route('/register', function() use ($conn) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pseudo = $_POST['pseudo'];
         $mail = $_POST['mail'];
@@ -68,28 +63,21 @@ Flight::route('/register', function() {
             return;
         }
 
-        // Access the global 'pdo' service
-        $pdo = Flight::get('pdo');
-        $stmt = $pdo->prepare("SELECT * FROM joueurs WHERE mail = ?");
-        $stmt->execute([$mail]);
-        if ($stmt->fetch()) {
+        $result = pg_query_params($conn, "SELECT * FROM joueurs WHERE mail = $1", [$mail]);
+        if (pg_fetch_assoc($result)) {
             $_SESSION['error'] = 'Cette adresse e-mail est déjà utilisée.';
             Flight::redirect('/register');
             return;
         }
 
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        try {
-            $stmt = $pdo->prepare("INSERT INTO joueurs (pseudo, mail, password) VALUES (?, ?, ?)");
-            if ($stmt->execute([$pseudo, $mail, $hashed_password])) {
-                $_SESSION['success'] = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
-                Flight::redirect('/login');
-            } else {
-                $_SESSION['error'] = 'Erreur lors de l\'inscription. ' . implode(', ', $stmt->errorInfo());
-                Flight::redirect('/register');
-            }
-        } catch (PDOException $e) {
-            $_SESSION['error'] = 'Erreur lors de l\'insertion : ' . $e->getMessage();
+        $stmt = pg_prepare($conn, "insert_joueur", "INSERT INTO joueurs (pseudo, mail, password) VALUES ($1, $2, $3)");
+
+        if ($stmt && pg_execute($conn, "insert_joueur", [$pseudo, $mail, $hashed_password])) {
+            $_SESSION['success'] = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+            Flight::redirect('/login');
+        } else {
+            $_SESSION['error'] = 'Erreur lors de l\'inscription. ' . pg_last_error($conn);
             Flight::redirect('/register');
         }
     } else {
@@ -112,7 +100,8 @@ Flight::route('GET /logout', function() {
 
 Flight::route('/objets', function() {
     try {
-        $pdo = Flight::get('pdo');
+        // Récupérer la connexion depuis Flight
+        $conn = Flight::get('conn');
 
         // ON RECUPERE LE ID DEPUIS LA REQUETE GET 
         $ids = isset($_GET['ids']) ? explode(',', $_GET['ids']) : [];
@@ -123,26 +112,33 @@ Flight::route('/objets', function() {
         }
 
         // ON PREPARE LA REQUETE SQL AVEC PLACEHOLDERS
-        $placeholders = rtrim(str_repeat('?,', count($ids)), ',');
-        $stmt = $pdo->prepare("SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code FROM objet WHERE id IN ($placeholders)");
-        // ON LA LANCE
-        $stmt->execute($ids);
-        $objets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $placeholders = implode(',', array_map(fn($index) => '$' . ($index + 1), array_keys($ids)));
+        $query = "SELECT id, nom_objet, ST_X(position) AS longitude, ST_Y(position) AS latitude, zoom, block, description, code 
+                  FROM objet 
+                  WHERE id IN ($placeholders)";
+
+        // Exécuter la requête avec les IDs comme paramètres
+        $result = pg_query_params($conn, $query, $ids);
+        
+        if (!$result) {
+            throw new Exception(pg_last_error($conn));  // Ajoute un message d'erreur détaillé
+        }
+
+        $objets = pg_fetch_all($result);
 
         if (empty($objets)) {
             Flight::json(['message' => 'Aucun objet trouvé.'], 404);
         } else {
             Flight::json($objets);
         }
-    } catch (PDOException $e) {
-        Flight::json(['error' => 'Erreur de base de données : ' . $e->getMessage()], 500);
+    } catch (Exception $e) {
+        Flight::json(['error' => 'Erreur lors de la requête : ' . $e->getMessage()], 500);
     }
 });
 
 
-
-
-
 Flight::start();
+
+
 
 ?>

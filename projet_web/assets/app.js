@@ -91,7 +91,7 @@ new Vue({
   
 
   addToInventory(item) { // Gère l'ajout d'un élément à l'inventaire
-    item = parseInt(item, 10); // Convertir en nombre entier
+    //item = parseInt(item, 10); // Convertir en nombre entier
     let emptyIndex = this.inventory.indexOf(""); // Initialiser emptyIndex
     const objectToAdd = this.elements_visible.find(i => i.id === item);
 
@@ -185,17 +185,20 @@ selectItem(index) {
 
 
 checkCode(id, code) {
-  id = parseInt(id, 10);
+  //id = parseInt(id, 10);
   console.log("ID de l'objet à débloquer :", code);
   console.log("codeendur : ",inputCode);
 
   if (inputCode === code) {
     inputCode = "";
     const currentElt = this.elements_visible.find(i => i.id === id);
+    
+
+
+
 
     if (currentElt) {
       const eltADebloquer = this.elements_visible.find(i => i.block === currentElt.id);
-
       if (eltADebloquer) {
         eltADebloquer.block = null;
       }
