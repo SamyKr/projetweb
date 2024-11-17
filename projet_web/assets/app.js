@@ -92,7 +92,7 @@ new Vue({
 
   
 
-  addToInventory(item, deblock) { // Gère l'ajout d'un élément à l'inventaire
+  addToInventory(item, ajout) { // Gère l'ajout d'un élément à l'inventaire
     //item = parseInt(item, 10); // Convertir en nombre entier
     let emptyIndex = this.inventory.indexOf(""); // Initialiser emptyIndex
     const objectToAdd = this.elements_visible.find(i => i.id === item);
@@ -136,9 +136,9 @@ new Vue({
           this.stopChrono();
         }
 
-        console.log("ici", typeof this.stringToArray(deblock))
-        if (deblock !== 'null') {
-          this.Ajout_objet(this.stringToArray(deblock));
+        console.log("ici", typeof this.stringToArray(ajout))
+        if (ajout !== 'null') {
+          this.Ajout_objet(this.stringToArray(ajout));
         }
 
 
@@ -197,7 +197,7 @@ selectItem(index) {
 
 
 
-checkCode(id, code, deblock) {
+checkCode(id, code, ajout) {
   //id = parseInt(id, 10);
 
   currentElt = this.elements_visible.find(i => i.id === id);
@@ -221,8 +221,8 @@ checkCode(id, code, deblock) {
     alert("Code incorrect, veuillez réessayer.");
   }
 
-  if (deblock !== 'null') {
-    this.Ajout_objet(this.stringToArray(deblock));
+  if (ajout !== 'null') {
+    this.Ajout_objet(this.stringToArray(ajout));
   }
 
   
@@ -240,13 +240,13 @@ checkCode(id, code, deblock) {
       alert(`L'élément "${item}" est déjà dans l'inventaire !`);
     },
 
-    startChrono() {
+    startChrono(ajout) {
         this.elapsedTime = 0; // Réinitialiser le temps
         this.timerInterval = setInterval(() => {
             this.elapsedTime += 0.1; // Incrémenter de 0,1 seconde
         }, 100); // Appeler toutes les 100 millisecondes (0,1 seconde)
-        this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
-        this.deleteObject('99'); // Supprimer l'objet de la carte
+        this.deleteObject('1'); // Supprimer l'objet de la carte
+        this.Ajout_objet(this.stringToArray(ajout))
 
     },
 
@@ -265,30 +265,48 @@ checkCode(id, code, deblock) {
     },
 
 
-  popup(description, code, id, deblock) {
-      if (code !== null) {
+  popup(description, code, id, ajout, indice, type) {
+      if (type === 'CODE') {
           return `
               <div class="popup-content">
                   <b>${description}</b><br>
+                  <b>Indice: ${indice}</b><br>
                   <input type="text" placeholder="Entrez le code" id="code_user">
-                  <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value, '${deblock}') })()">Valider</button>
+                  <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value, '${ajout}') })()">Valider</button>
               </div>`;
       } 
-      if (id === '99') {
+      if (type === 'DEBLOQUANT') {
           return `
-              <div class="popup-content">
-                  <b>${description}</b><br>
-                  <button onclick="(function() { startChrono() })()">Commencer la partie</button>         
-              </div>`;
+          <div class="popup-content">
+              <b>${description}</b><br>
+              <b>Indice: ${indice}</b><br>
+              <button onclick="(function() { addToInventory('${id}', '${ajout}') })()">Ajouter à l'inventaire</button>
+          </div>`;
       } 
+      if (type === 'BLOQUE') { // faire une fonction pour débloquer mais n'ajoute pas à l'inventaire
+        return `
+        <div class="popup-content">
+            <b>${description}</b><br>
+            <b>Indice: ${indice}</b><br>
+            <button onclick="(function() { addToInventory('${id}', '${ajout}') })()">Ajouter à l'inventaire</button>
+        </div>`;
+    } 
       else {
+        if (id === '1') {
           return `
               <div class="popup-content">
                   <b>${description}</b><br>
-                  <button onclick="(function() { addToInventory('${id}', '${deblock}') })()">Ajouter à l'inventaire</button>
+                  <b>Indice: ${indice}</b><br>
+                  <button onclick="(function() { startChrono('${ajout}') })()">Commencer la partie</button>         
+              </div>`;}
+        else{
+          return `
+              <div class="popup-content">
+                  <b>${description}</b><br>
+                  <b>Indice: ${indice}</b><br>
               </div>`;
       }
-  },
+  }},
 
 
 
@@ -323,7 +341,7 @@ checkCode(id, code, deblock) {
         const marker = L.marker(latLng, { icon: customIcon }).addTo(this.map);
       
 
-        const popupContent = this.popup(obj.description, obj.code, obj.id, obj.deblock);
+        const popupContent = this.popup(obj.description, obj.code, obj.id, obj.ajout, obj.indice, obj.type);
         marker.bindPopup(popupContent);
 
         this.loadedObjectIds.push(obj.id); // ajout a la carte de chaleur
@@ -338,7 +356,7 @@ checkCode(id, code, deblock) {
           nom_objet: obj.nom_objet, 
           code: obj.code,
           depart: obj.depart,
-          deblock: obj.deblock
+          ajout: obj.ajout
         });
       });
     })
