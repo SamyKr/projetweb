@@ -251,15 +251,28 @@ checkCode(id, code, ajout) {
 
     stopChrono() {
       console.log("Arrêt du chrono");
-      clearInterval(this.timerInterval); 
-      this.timerInterval = null; 
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+   
+      // Créer un formulaire caché pour envoyer le temps
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/save-time';  // La route pour traiter la requête POST
+   
+      // Créer un champ de formulaire pour le temps
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'time';
+      input.value = this.elapsedTime;  // Le temps écoulé
+   
+      form.appendChild(input);
+   
+      // Ajouter le formulaire à la page et l'envoyer
+      document.body.appendChild(form);
+      form.submit();  // Soumettre le formulaire
+    },
+   
   
-      // Délai de 2 secondes avant de rediriger
-      setTimeout(() => {
-        console.log("Redirection vers le Hall of Fame...");
-        window.location.href = '/resultat'; // Rediriger vers la page /resultat après 2 secondes
-    }, 2000); // Délai de 2000 millisecondes (2 secondes)
-  },
 
     updateChronoSpeed(triche) {
       if (this.timerInterval) {

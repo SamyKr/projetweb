@@ -83,20 +83,74 @@ Flight::route('/register', function() use ($conn) {
     }
 });
 
+Flight::route('POST /save-time', function() use ($conn) {
+    // Vérifiez si l'utilisateur est connecté
+    if (!isset($_SESSION['user_id'])) {
+        Flight::json(['error' => 'Utilisateur non connecté.'], 401);
+        return;
+    }
+
+    $time = $_POST['time'];
+
+    // Convertir le temps en minutes et secondes
+    $minutes = floor($time / 60);
+    $seconds = floor($time % 60); // Partie entière des secondes
+    $tenths = floor(($time - floor($time)) * 10); // Extraire les dixièmes
+
+    // Formater en chaîne "MM:SS.t"
+    $formatted_time = sprintf('%02d:%02d.%d', $minutes, $seconds, $tenths);
+
+
+    // Enregistrer le score dans la base de données
+    $query = "UPDATE joueurs SET score = $1 WHERE id = $2";
+    pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
+
+    // Vérifiez si le nouveau score est meilleur que le highscore actuel
+    $query = "SELECT highscore FROM joueurs WHERE id = $1";
+    $result = pg_query_params($conn, $query, [$_SESSION['user_id']]);
+    $currentHighscoreData = pg_fetch_assoc($result);
+    $currentHighscore = $currentHighscoreData['highscore'];
+
+    // Mettez à jour le highscore uniquement si le nouveau score est meilleur
+    if (is_null($currentHighscore) || $formatted_time < $currentHighscore) {
+        $query = "UPDATE joueurs SET highscore = $1 WHERE id = $2";
+        pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
+    }
+
+    // Récupérer les données pour le Hall of Fame
+    $query = "SELECT id, pseudo, highscore FROM joueurs WHERE highscore IS NOT NULL ORDER BY highscore ASC LIMIT 10";
+    $result = pg_query($conn, $query);
+    $hallOfFame = pg_fetch_all($result);
+
+    // Récupérer le score actuel de l'utilisateur
+    $queryScoreActuel = "SELECT score FROM joueurs WHERE id = $1";
+    $resultScoreActuel = pg_query_params($conn, $queryScoreActuel, [$_SESSION['user_id']]);
+    $scoreActuelData = pg_fetch_assoc($resultScoreActuel);
+    $dernier_score = $scoreActuelData['score'] ?? null;
+
+    // Rendu de la page de résultats avec le Hall of Fame et le dernier score
+    Flight::render('resultat', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
+});
+
+
+
+
+
 Flight::route('GET /jeu', function() {
     Flight::render('jeu');
 });
 
-Flight::route('GET /map', function() {
-    Flight::render('map');
+Flight::route('GET /regles', function() {
+    Flight::render('regles');
 });
 
+Flight::route('GET /login', function() {
+    Flight::render('login');
+});
 
-
-
-
-
-
+Flight::route('GET /menu', function() {
+    Flight::render('menu');
+});
 
 
 
@@ -106,7 +160,7 @@ Flight::route('GET /resultat', function(){
         $conn = Flight::get('conn');
         
         // Préparer la requête pour récupérer les données du Hall of Fame
-        $query = "SELECT id, pseudo, highscore FROM joueurs ORDER BY highscore DESC LIMIT 10"; // Limite les 10 meilleurs scores
+        $query = "SELECT id, pseudo, highscore FROM joueurs ORDER BY highscore ASC LIMIT 10"; // Limite les 10 meilleurs scores
 
         // Exécuter la requête
         $result = pg_query($conn, $query);
@@ -119,7 +173,7 @@ Flight::route('GET /resultat', function(){
         $hallOfFame = pg_fetch_all($result);
 
         // Récupérer le dernier score ajouté (le score actuel)
-        $queryScoreActuel = "SELECT highscore FROM joueurs ORDER BY id DESC LIMIT 1"; // On récupère le dernier score ajouté
+        $queryScoreActuel = "SELECT highscore FROM joueurs ORDER BY id ASC LIMIT 1"; // On récupère le dernier score ajouté
         $resultScoreActuel = pg_query($conn, $queryScoreActuel);
         
         if (!$resultScoreActuel) {
@@ -142,11 +196,6 @@ Flight::route('GET /resultat', function(){
         Flight::render('resultat', ['error' => 'Erreur lors de la récupération des données : ' . $e->getMessage()]);
     }
 });
-
-
-
-
-
 
 
 

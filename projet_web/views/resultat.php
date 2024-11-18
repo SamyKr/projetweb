@@ -11,9 +11,9 @@
         <h1 class="text-center">Hall of Fame</h1>
 
         <!-- Affichage du dernier score -->
-        <?php if (isset($dernier_score)): ?>
+        <?php if (isset($dernier_score) && isset($_SESSION['pseudo'])): ?>
             <div class="alert alert-success">
-                <strong>Dernier score : </strong> <?= htmlspecialchars($dernier_score) ?> secondes
+                <strong>Dernier score :</strong> <?= htmlspecialchars($_SESSION['pseudo']) ?> - <?= htmlspecialchars($dernier_score) ?> secondes
             </div>
         <?php endif; ?>
 
@@ -39,12 +39,22 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">Aucun résultat trouvé</td>
+                            <td colspan="3" class="text-center">Aucun résultat trouvé</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
+
+        <!-- Bouton pour retourner au menu -->
+        <div class="text-center mt-4">
+            <a href="menu" class="btn btn-primary">Retour au menu</a>
+            <a href="jeu" class="btn btn-primary">Rejouer</a>
+        </div>
     </div>
+
+    <!-- Optionnel : ajout du script Bootstrap pour les fonctionnalités dynamiques -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

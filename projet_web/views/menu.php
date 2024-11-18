@@ -16,9 +16,9 @@
 
 <div class="content">
     <div class="button-group">
-        <a href="jeu" class="btn btn-large">Jeu</a>
+        <a href="login" class="btn btn-large">Jouer</a>
         <a href="regles" class="btn btn-small">Règles</a>
-        <a href="map" class="btn btn-small">Map</a>
+        <a href="resultat" class="btn btn-small">Hall of Fame</a>
     </div>
 </div>
 
