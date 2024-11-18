@@ -19,9 +19,9 @@ new Vue({
         index: null,
         id: null,
       },
-      elapsedTime: 0,
-      interval: null,
-      isRunning: false
+      elapsedTime: 0
+      //interval: null
+      //isRunning: false
     };
   },
 
@@ -34,24 +34,28 @@ new Vue({
     // CARTE DE CHALEUR !!!
     toggleHeatmap(event) { // Permet d'afficher ou non la carte de triche grâce à une case à cocher
       const map = this.map;
-      if (event.target.checked) {
+    if (event.target.checked) {
         if (this.loadedObjectIds.length > 0) {
-          map.addLayer(this.wmsLayer);
-          this.isHeatmapVisible = true;
+            map.addLayer(this.wmsLayer);
+            this.isHeatmapVisible = true;
+            this.updateChronoSpeed(true); // Doubler la vitesse du chronomètre
         } else {
-          alert("Aucun objet chargé pour afficher la carte de chaleur !");
-          event.target.checked = false;
+            alert("Aucun objet chargé pour afficher la carte de chaleur !");
+            event.target.checked = false;
         }
-      } else {
+    } else {
         map.removeLayer(this.wmsLayer);
         this.isHeatmapVisible = false;
-      }
-    },
+        this.updateChronoSpeed(false); // Revenir à la vitesse normale
+    }
+},
+
+    
 
     loadHeatmapLayer() { // On charge la carte de triche en fonction des objets présents dans loadedObjectIds
       if (this.loadedObjectIds.length > 0) {
         const ids = this.loadedObjectIds.join(','); 
-        if (!this.wmsLayer) { // Vérifiez si la couche n'est pas encore créée
+        if (!this.wmsLayer) { // Vérifie si la couche n'est pas encore créée
           this.wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/carte_chaleur_projet/wms', {
             layers: 'carte_chaleur_projet:objet',
             format: 'image/png',
@@ -66,7 +70,7 @@ new Vue({
       } else {
         if (this.wmsLayer && !this.isHeatmapVisible) {
           this.map.removeLayer(this.wmsLayer); // Retirer la couche de chaleur si aucun objet
-          this.wmsLayer = null; // Réinitialiser la référence
+          this.wmsLayer = null; // Réinitialiser la ref
         }
       }
     },
@@ -75,7 +79,7 @@ new Vue({
 
   updateUIinventory() { // Modifie l'inventaire 
     this.inventory.forEach((item, index) => {
-      if (item && item.nom_objet) { // Vérifiez si l'item existe et a un nom
+      if (item && item.nom_objet) { // Vérifie si l'item existe et a un nom
         this.$set(this.items, index, { 
           src: `data/image/${item.nom_objet}.png`, 
           alt: `Image de ${item.nom_objet}`
@@ -87,12 +91,11 @@ new Vue({
         });
       }
     });
-  },
+  },  
 
 
-  
 
-  addToInventory(item, ajout) { // Gère l'ajout d'un élément à l'inventaire
+  addToInventory(item, ajout, inv) { // Gère l'ajout d'un élément à l'inventaire
     //item = parseInt(item, 10); // Convertir en nombre entier
     let emptyIndex = this.inventory.indexOf(""); // Initialiser emptyIndex
     const objectToAdd = this.elements_visible.find(i => i.id === item);
@@ -103,7 +106,7 @@ new Vue({
         return;
     }
 
-    // Vérifiez si l'objet est bloqué ou si l'ID de selectedItem correspond à l'ID de blocage de l'objet
+    // Vérifie si l'objet est bloqué ou si l'ID de selectedItem correspond à l'ID de blocage de l'objet
     if (objectToAdd.block !== null && objectToAdd.block !== this.selectedItem.id) {
         alert(`L'objet ${objectToAdd.nom_objet} est bloqué et ne peut pas être ajouté à l'inventaire. Débloquez-le d'abord.`);
         return; 
@@ -122,19 +125,16 @@ new Vue({
         // Mettre à jour emptyIndex après la suppression
         emptyIndex = this.inventory.indexOf("");
 
-        // Ajouter l'objet à l'inventaire à l'index vide
+        // Ajouter l'objet à l'inventaire à l'index vide si c'est un objet inventaire
+        if (inv === true) {
         this.$set(this.inventory, emptyIndex, {
             nom_objet: objectToAdd.nom_objet,
             id: objectToAdd.id
-        });
+        });}
 
         this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
-        this.deleteObject(item); // Supprimer l'objet de la carte
+        this.deleteObject(item); // Supprime l'objet de la carte
 
-        //// Condition temporaire pour tester la fin du jeu
-        if (this.inventory.some(item => item.id === '10')) {
-          this.stopChrono();
-        }
 
         console.log("ici", typeof this.stringToArray(ajout))
         if (ajout !== 'null') {
@@ -162,22 +162,22 @@ selectItem(index) {
   //const item = this.items[index]; // Obtenir l'élément correspondant à l'index sélectionné INUTILE MNT ?
   const inventoryItem = this.inventory[index]; // Obtenir l'élément de l'inventaire correspondant
 
-  // Vérifier si un élément est déjà sélectionné
+  // Vérifie si un élément est déjà sélectionné
   if (this.selectedItem.index === null) {
     // Aucun élément n'est sélectionné, on sélectionne celui-ci
     this.$set(this.items, index, {
       ...this.items[index], // Conserver les autres propriétés
-      border: '2px solid red', // Ajouter une bordure rouge
+      border: '2px solid red', // Ajoute une bordure rouge
       backgroundColor: 'rgba(255, 0, 0, 0.2)' 
     });
-    this.selectedItem = { index: index, id: inventoryItem ? inventoryItem.id : null }; // Mettre à jour l'élément sélectionné
+    this.selectedItem = { index: index, id: inventoryItem ? inventoryItem.id : null }; // Met à jour l'élément sélectionné
 
   } else {
     // Un élément est déjà sélectionné, retirer la bordure de l'élément précédent
     this.$set(this.items, this.selectedItem.index, {
-      ...this.items[this.selectedItem.index], // Conserver les autres propriétés
-      border: 'none', // Enlever la bordure
-      backgroundColor: 'transparent' // Réinitialiser le fond
+      ...this.items[this.selectedItem.index], // Conserve les autres propriétés
+      border: 'none', // Enlève la bordure
+      backgroundColor: 'transparent' // Réinitialise le fond
     });
 
     // Mettre à jour l'élément sélectionné
@@ -233,77 +233,98 @@ checkCode(id, code, ajout) {
 
 
 
-// AFFICHAGE DES MESSAGES SPECIFIQUES
-  
 
     displayMessage(item) { // Normalement elle ne sert à rien
       alert(`L'élément "${item}" est déjà dans l'inventaire !`);
     },
 
     startChrono(ajout) {
-        this.elapsedTime = 0; // Réinitialiser le temps
+        this.elapsedTime = 0; 
         this.timerInterval = setInterval(() => {
-            this.elapsedTime += 0.1; // Incrémenter de 0,1 seconde
-        }, 100); // Appeler toutes les 100 millisecondes (0,1 seconde)
-        this.deleteObject('1'); // Supprimer l'objet de la carte
+            this.elapsedTime += 0.1;
+        }, 100); 
+        this.deleteObject('1'); 
         this.Ajout_objet(this.stringToArray(ajout))
 
     },
 
 
     stopChrono() {
-        clearInterval(this.timerInterval); // Arrêter l'intervalle du chronomètre
-        this.timerInterval = null; // Réinitialiser l'ID de l'intervalle
-    },
+      console.log("Arrêt du chrono");
+      clearInterval(this.timerInterval); 
+      this.timerInterval = null; 
+  
+      // Délai de 2 secondes avant de rediriger
+      setTimeout(() => {
+        console.log("Redirection vers le Hall of Fame...");
+        window.location.href = '/resultat'; // Rediriger vers la page /resultat après 2 secondes
+    }, 2000); // Délai de 2000 millisecondes (2 secondes)
+  },
+
+    updateChronoSpeed(triche) {
+      if (this.timerInterval) {
+          clearInterval(this.timerInterval); // Arrêter le chronomètre en cours
+          const interval = triche ? 50 : 100; // Doubler la vitesse si isDoubleSpeed est vrai
+          this.timerInterval = setInterval(() => {
+              this.elapsedTime += 0.1; // La même incrémentation reste
+          }, interval);
+      }
+  },
 
 
     formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
-        const tenths = Math.floor((seconds % 1) * 10); // Calcule les dixièmes de seconde
+        const tenths = Math.floor((seconds % 1) * 10); 
         return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}:${tenths}`;
     },
 
 
-  popup(description, code, id, ajout, indice, type) {
-      if (type === 'CODE') {
+  popup(obj) {
+      if (obj.type === 'CODE') {
           return `
               <div class="popup-content">
-                  <b>${description}</b><br>
-                  <b>Indice: ${indice}</b><br>
+                  <b>${obj.description}</b><br>
+                  <b>Indice: ${obj.indice}</b><br>
                   <input type="text" placeholder="Entrez le code" id="code_user">
-                  <button onclick="(function() { checkCode('${id}', document.getElementById('code_user').value, '${ajout}') })()">Valider</button>
+                  <button onclick="(function() { checkCode('${obj.id}', document.getElementById('code_user').value, '${obj.ajout}') })()">Valider</button>
               </div>`;
       } 
-      if (type === 'DEBLOQUANT') {
+      if (obj.type === 'DEBLOQUANT') {
           return `
           <div class="popup-content">
-              <b>${description}</b><br>
-              <b>Indice: ${indice}</b><br>
-              <button onclick="(function() { addToInventory('${id}', '${ajout}') })()">Ajouter à l'inventaire</button>
+              <b>${obj.description}</b><br>
+              <b>Indice: ${obj.indice}</b><br>
+              <button onclick="(function() { addToInventory('${obj.id}', '${obj.ajout}', true) })()">Ajouter à l'inventaire</button>
           </div>`;
       } 
-      if (type === 'BLOQUE') { // faire une fonction pour débloquer mais n'ajoute pas à l'inventaire
+      if (obj.type === 'BLOQUE') { 
         return `
         <div class="popup-content">
-            <b>${description}</b><br>
-            <b>Indice: ${indice}</b><br>
-            <button onclick="(function() { addToInventory('${id}', '${ajout}') })()">Ajouter à l'inventaire</button>
+            <b>${obj.description}</b><br>
+            <b>Indice: ${obj.indice}</b><br>
+            <button onclick="(function() { addToInventory('${obj.id}', '${obj.ajout}', false) })()">Débloquer</button>
         </div>`;
     } 
       else {
-        if (id === '1') {
+        if (obj.id === '1') {
           return `
               <div class="popup-content">
-                  <b>${description}</b><br>
-                  <b>Indice: ${indice}</b><br>
-                  <button onclick="(function() { startChrono('${ajout}') })()">Commencer la partie</button>         
+                  <b>${obj.description}</b><br>
+                  <b>Indice: ${obj.indice}</b><br>
+                  <button onclick="(function() { startChrono('${obj.ajout}') })()">Commencer la partie</button>         
+              </div>`;}
+        if (obj.id === '2') { //Mettre confition "fin===true" plutot
+          return `
+              <div class="popup-content">
+                  <b>${obj.description}</b><br>
+                  <button onclick="(function() { stopChrono() })()">Arrêter le chrono</button>         
               </div>`;}
         else{
           return `
               <div class="popup-content">
-                  <b>${description}</b><br>
-                  <b>Indice: ${indice}</b><br>
+                  <b>${obj.description}</b><br>
+                  <b>Indice: ${obj.indice}</b><br>
               </div>`;
       }
   }},
@@ -341,7 +362,7 @@ checkCode(id, code, ajout) {
         const marker = L.marker(latLng, { icon: customIcon }).addTo(this.map);
       
 
-        const popupContent = this.popup(obj.description, obj.code, obj.id, obj.ajout, obj.indice, obj.type);
+        const popupContent = this.popup(obj);
         marker.bindPopup(popupContent);
 
         this.loadedObjectIds.push(obj.id); // ajout a la carte de chaleur
@@ -444,6 +465,7 @@ deleteObject(id) {
     window.addToInventory = this.addToInventory.bind(this); // METHODE GLOBALE
     window.checkCode = this.checkCode.bind(this); // METHODE GLOBALE
     window.startChrono = this.startChrono.bind(this); // METHODE GLOBALE
+    window.stopChrono = this.stopChrono.bind(this); // METHODE GLOBALE
 
   }
 });

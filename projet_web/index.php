@@ -22,7 +22,6 @@ session_start();
 
 Flight::set('conn', $conn);
 
-// Example route using global 'conn' service
 Flight::route('GET /', function() {
     Flight::render('jeu');
 });
@@ -92,6 +91,65 @@ Flight::route('GET /map', function() {
     Flight::render('map');
 });
 
+
+
+
+
+
+
+
+
+
+Flight::route('GET /resultat', function(){
+    try {
+        // Connexion à la base de données
+        $conn = Flight::get('conn');
+        
+        // Préparer la requête pour récupérer les données du Hall of Fame
+        $query = "SELECT id, pseudo, highscore FROM joueurs ORDER BY highscore DESC LIMIT 10"; // Limite les 10 meilleurs scores
+
+        // Exécuter la requête
+        $result = pg_query($conn, $query);
+        
+        if (!$result) {
+            throw new Exception('Erreur lors de l\'exécution de la requête : ' . pg_last_error($conn));
+        }
+
+        // Récupérer les résultats sous forme de tableau
+        $hallOfFame = pg_fetch_all($result);
+
+        // Récupérer le dernier score ajouté (le score actuel)
+        $queryScoreActuel = "SELECT highscore FROM joueurs ORDER BY id DESC LIMIT 1"; // On récupère le dernier score ajouté
+        $resultScoreActuel = pg_query($conn, $queryScoreActuel);
+        
+        if (!$resultScoreActuel) {
+            throw new Exception('Erreur lors de la récupération du score actuel : ' . pg_last_error($conn));
+        }
+
+        $scoreActuelData = pg_fetch_assoc($resultScoreActuel);
+        $dernier_score = $scoreActuelData['highscore'] ?? null;
+
+        // Si le Hall of Fame est vide
+        if (empty($hallOfFame)) {
+            Flight::render('resultat', ['message' => 'Aucun résultat trouvé dans le Hall of Fame.']);
+            return;
+        }
+
+        // Afficher la page HTML avec les données du Hall of Fame et le dernier score
+        Flight::render('resultat', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
+    } catch (Exception $e) {
+        // Gestion des erreurs
+        Flight::render('resultat', ['error' => 'Erreur lors de la récupération des données : ' . $e->getMessage()]);
+    }
+});
+
+
+
+
+
+
+
+
 Flight::route('GET /logout', function() {
     session_destroy();
     Flight::redirect('/login');
@@ -99,7 +157,7 @@ Flight::route('GET /logout', function() {
 
 Flight::route('/objets', function() {
     try {
-        // Récupérer la connexion depuis Flight
+        // On récupère la connexion depuis Flight
         $conn = Flight::get('conn');
 
         // ON RECUPERE LES IDS DEPUIS LA REQUETE GET 
@@ -122,11 +180,11 @@ Flight::route('/objets', function() {
                   FROM objet
                   WHERE id IN ($placeholders)";
 
-        // Exécuter la requête avec les IDs comme paramètres
+        // On éxécute la requête avec les IDs comme paramètres
         $result = pg_query_params($conn, $query, $ids);
         
         if (!$result) {
-            throw new Exception(pg_last_error($conn));  // Ajoute un message d'erreur détaillé
+            throw new Exception(pg_last_error($conn));  // On ajoute un message d'erreur détaillé
         }
 
         $objets = pg_fetch_all($result);
