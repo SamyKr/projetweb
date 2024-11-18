@@ -264,7 +264,7 @@ checkCode(id, code, ajout) {
     updateChronoSpeed(triche) {
       if (this.timerInterval) {
           clearInterval(this.timerInterval); // Arrêter le chronomètre en cours
-          const interval = triche ? 50 : 100; // Doubler la vitesse si isDoubleSpeed est vrai
+          const interval = triche ? 60 : 120; // Doubler la vitesse si isDoubleSpeed est vrai
           this.timerInterval = setInterval(() => {
               this.elapsedTime += 0.1; // La même incrémentation reste
           }, interval);
@@ -314,7 +314,7 @@ checkCode(id, code, ajout) {
                   <b>Indice: ${obj.indice}</b><br>
                   <button onclick="(function() { startChrono('${obj.ajout}') })()">Commencer la partie</button>         
               </div>`;}
-        if (obj.id === '2') { //Mettre confition "fin===true" plutot
+        if (obj.fin === 't') { //Mettre confition "fin==='t'" plutot
           return `
               <div class="popup-content">
                   <b>${obj.description}</b><br>
