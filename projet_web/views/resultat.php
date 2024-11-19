@@ -49,7 +49,10 @@
         <!-- Bouton pour retourner au menu -->
         <div class="text-center mt-4">
             <a href="menu" class="btn btn-primary">Retour au menu</a>
-            <a href="jeu" class="btn btn-primary">Rejouer</a>
+            <!-- Affichage du bouton "Rejouer" uniquement si l'utilisateur est connecté -->
+            <?php if (isset($_SESSION['pseudo'])): ?>
+                <a href="jeu" class="btn btn-primary">Rejouer</a>
+            <?php endif; ?>
         </div>
     </div>
 

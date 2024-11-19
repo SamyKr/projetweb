@@ -376,6 +376,7 @@ checkCode(id, code, ajout) {
       
 
         const popupContent = this.popup(obj);
+
         marker.bindPopup(popupContent);
 
         this.loadedObjectIds.push(obj.id); // ajout a la carte de chaleur

@@ -20,10 +20,12 @@ if (!$conn) {
 
 session_start();
 
+
+
 Flight::set('conn', $conn);
 
 Flight::route('GET /', function() {
-    Flight::render('jeu');
+    Flight::render('menu');
 });
 
 Flight::route('/login', function() use ($conn) {
@@ -38,6 +40,11 @@ Flight::route('/login', function() use ($conn) {
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['pseudo'] = $user['pseudo'];
+
+            // Définir un cookie pour une connexion persistante (validité de 1 jour)
+            setcookie('user_id', $user['id'], time() + 86400, '/'); // Expire dans 1 jour
+            setcookie('pseudo', $user['pseudo'], time() + 86400, '/');
+
             Flight::redirect('/jeu');
         } else {
             $_SESSION['error'] = 'Adresse e-mail ou mot de passe incorrect.';
@@ -100,7 +107,6 @@ Flight::route('POST /save-time', function() use ($conn) {
     // Formater en chaîne "MM:SS.t"
     $formatted_time = sprintf('%02d:%02d.%d', $minutes, $seconds, $tenths);
 
-
     // Enregistrer le score dans la base de données
     $query = "UPDATE joueurs SET score = $1 WHERE id = $2";
     pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
@@ -111,8 +117,22 @@ Flight::route('POST /save-time', function() use ($conn) {
     $currentHighscoreData = pg_fetch_assoc($result);
     $currentHighscore = $currentHighscoreData['highscore'];
 
-    // Mettez à jour le highscore uniquement si le nouveau score est meilleur
-    if (is_null($currentHighscore) || $formatted_time < $currentHighscore) {
+    // Comparer les temps pour savoir si le nouveau score est meilleur
+    // Convertir les temps en secondes pour faciliter la comparaison
+    $newScoreInSeconds = $minutes * 60 + $seconds + $tenths / 10;
+
+    if ($currentHighscore) {
+        // Convertir le highscore existant en secondes
+        preg_match('/(\d+):(\d+)\.(\d+)/', $currentHighscore, $matches);
+        $currentHighscoreInSeconds = $matches[1] * 60 + $matches[2] + $matches[3] / 10;
+        
+        // Si le nouveau score est meilleur, on le met à jour
+        if ($newScoreInSeconds < $currentHighscoreInSeconds) {
+            $query = "UPDATE joueurs SET highscore = $1 WHERE id = $2";
+            pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
+        }
+    } else {
+        // Si aucun highscore n'existe, on l'ajoute
         $query = "UPDATE joueurs SET highscore = $1 WHERE id = $2";
         pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
     }
@@ -136,9 +156,18 @@ Flight::route('POST /save-time', function() use ($conn) {
 
 
 
+
 Flight::route('GET /jeu', function() {
-    Flight::render('jeu');
+    if (!isset($_SESSION['user_id']) && !isset($_COOKIE['user_id'])) {
+        // Si l'utilisateur n'est pas connecté, redirige vers la page de connexion
+        Flight::redirect('/login');
+    } else {
+        // Si connecté, afficher le jeu
+        Flight::render('jeu');
+    }
 });
+
+
 
 Flight::route('GET /regles', function() {
     Flight::render('regles');
@@ -199,9 +228,12 @@ Flight::route('GET /resultat', function(){
 
 
 
-Flight::route('GET /logout', function() {
+Flight::route('/logout', function() {
+    // Supprimer la session et les cookies
     session_destroy();
-    Flight::redirect('/login');
+    setcookie('user_id', '', time() - 3600, '/'); // Supprimer le cookie
+    setcookie('pseudo', '', time() - 3600, '/'); // Supprimer le cookie
+    Flight::redirect('/menu');
 });
 
 Flight::route('/objets', function() {
