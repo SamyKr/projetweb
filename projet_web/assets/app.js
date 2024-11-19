@@ -214,18 +214,15 @@ checkCode(id, code, ajout) {
 
       alert("Code correct !");
       this.deleteObject(id);
+      if (ajout !== 'null') {
+        this.Ajout_objet(this.stringToArray(ajout));
+      }
     } else {
       console.warn("Élément non trouvé avec l'ID :", id);
     }
   } else {
     alert("Code incorrect, veuillez réessayer.");
   }
-
-  if (ajout !== 'null') {
-    this.Ajout_objet(this.stringToArray(ajout));
-  }
-
-  
 }
 ,
 
