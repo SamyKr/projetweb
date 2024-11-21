@@ -1,3 +1,5 @@
+CREATE EXTENSION postgis;
+
 -- Table: public.joueurs
 
 -- DROP TABLE IF EXISTS public.joueurs;
