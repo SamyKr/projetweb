@@ -8,8 +8,8 @@ Bienvenue sur notre jeu **Drive to Escape** ! 🚗💨
 
 Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 
-- **Postgres**
-- **PgAdmin**
+- **Postgres** avec l'extension **postgis**
+- **PgAdmin** 
 - **MAMP**
 - **GeoServer**
 
@@ -18,10 +18,11 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 ## 📋 **Configuration** :
 
 #### 1. **PgAdmin** 🗄️
-- **Étape 1** : Créez une **Database** nommée **`map`**.
-- **Étape 2** : Ouvrez un **éditeur SQL** dans PgAdmin (assurez-vous d'être dans la db **`map`**).
-- **Étape 3** : Copiez le contenu du fichier **`bdd.txt`**.
-- **Étape 4** : Exécutez la requête SQL.
+- **Étape 1** : Créez une base de données vide nommée **map**
+- **Étape 2** : 
+
+
+- Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **9** et **10** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**.
 
 ✨ **PgAdmin, c'est fait !** ✨
 
@@ -33,7 +34,7 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 ---
 
 #### 3. **GeoServer** 🌍
-- Placez le workspace **`carte_chaleur_projet`** dans le dossier **`workspaces`** de votre application **Geoserver**
+- Récupérez dans le dossier **`config/Geoserver`** le workspace **`carte_chaleur_projet`** et mettez le dans le dossier **`workspaces`** de votre application **Geoserver**
 - Lancez le fichier **`startup.sh`** pour démarrer GeoServer.
 
 ---
