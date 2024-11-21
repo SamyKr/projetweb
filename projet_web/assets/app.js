@@ -290,54 +290,55 @@ checkCode(id, code, ajout) {
     },
 
 
-  popup(obj) {
-      if (obj.type === 'CODE') {
-          return `
-              <div class="popup-content">
-                  <b>${obj.description}</b><br>
-                  <b>Indice: ${obj.indice}</b><br>
-                  <input type="text" placeholder="Entrez le code" id="code_user">
-                  <button onclick="(function() { checkCode('${obj.id}', document.getElementById('code_user').value, '${obj.ajout}') })()">Valider</button>
-              </div>`;
-      } 
-      if (obj.type === 'DEBLOQUANT') {
-          return `
-          <div class="popup-content">
-              <b>${obj.description}</b><br>
-              <b>Indice: ${obj.indice}</b><br>
-              <button onclick="(function() { addToInventory('${obj.id}', '${obj.ajout}', true) })()">Ajouter à l'inventaire</button>
-          </div>`;
-      } 
-      if (obj.type === 'BLOQUE') { 
-        return `
-        <div class="popup-content">
-            <b>${obj.description}</b><br>
-            <b>Indice: ${obj.indice}</b><br>
-            <button onclick="(function() { addToInventory('${obj.id}', '${obj.ajout}', false) })()">Débloquer</button>
-        </div>`;
-    } 
-      else {
-        if (obj.id === '1') {
-          return `
-              <div class="popup-content">
-                  <b>${obj.description}</b><br>
-                  <b>Indice: ${obj.indice}</b><br>
-                  <button onclick="(function() { startChrono('${obj.ajout}') })()">Commencer la partie</button>         
-              </div>`;}
-        if (obj.fin === 't') { //Mettre confition "fin==='t'" plutot
-          return `
-              <div class="popup-content">
-                  <b>${obj.description}</b><br>
-                  <button onclick="(function() { stopChrono() })()">Arrêter le chrono</button>         
-              </div>`;}
-        else{
-          return `
-              <div class="popup-content">
-                  <b>${obj.description}</b><br>
-                  <b>Indice: ${obj.indice}</b><br>
-              </div>`;
+    popup(obj) {
+      let content = `<div class="popup-content">`;
+  
+      // Ajouter la description uniquement si elle existe et n'est pas vide
+      if (obj.description && obj.description.trim() !== "") {
+          content += `<b>${obj.description}</b><br>`;
       }
-  }},
+  
+      // Ajouter l'indice uniquement si il existe et n'est pas vide
+      if (obj.indice && obj.indice.trim() !== "") {
+          content += `<b>Indice: ${obj.indice}</b><br>`;
+      }
+  
+      switch (obj.type) {
+          case 'CODE':
+              content += `
+                  <input type="text" placeholder="Entrez le code" id="code_user">
+                  <button onclick="checkCode('${obj.id}', document.getElementById('code_user').value, '${obj.ajout}')">Valider</button>
+              `;
+              break;
+  
+          case 'DEBLOQUANT':
+              content += `
+                  <button onclick="addToInventory('${obj.id}', '${obj.ajout}', true)">Ajouter à l'inventaire</button>
+              `;
+              break;
+  
+          case 'BLOQUE':
+              content += `
+                  <button onclick="addToInventory('${obj.id}', '${obj.ajout}', false)">Débloquer</button>
+              `;
+              break;
+  
+          default:
+              if (obj.id === '1') {
+                  content += `
+                      <button onclick="startChrono('${obj.ajout}')">Commencer la partie</button>
+                  `;
+              } else if (obj.fin === 't') {
+                  content += `
+                      <button onclick="stopChrono()">Arrêter le chrono</button>
+                  `;
+              }
+              break;
+      }
+  
+      content += `</div>`;
+      return content;
+  },
 
 
 
