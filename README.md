@@ -18,8 +18,8 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 ## 📋 **Configuration** :
 
 #### 1. **PgAdmin** 🗄️
-- **Étape 1** : Créez une base de données vide nommée **map**
-- **Étape 2** : 
+- **Étape 1** : Créez une table map
+- **Étape 2** : Ouvrez QueryTool et copiez collez le fichier table.sql
 
 
 - Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **9** et **10** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**.
