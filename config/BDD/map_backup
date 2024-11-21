@@ -1,0 +1,87 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 16.4 (Postgres.app)
+-- Dumped by pg_dump version 16.4
+
+-- Started on 2024-11-19 19:50:05 CET
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 4552 (class 0 OID 19645)
+-- Dependencies: 222
+-- Data for Name: joueurs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.joueurs (id, pseudo, mail, password, score, highscore) FROM stdin;
+5	CLEM	clement.rathana@ensg.eu	$2y$10$8rwT2VYdjfnyjmdPY7wq7.VPmVbT.B/xwZPY9Nc3caUW7u/iobBNu	00:09:21.7	00:09:21.7
+6	nell	nell.capelle@gmail.com	$2y$10$405gWAbQ0FVdbztxLXoSz.9V12b6WxVkq6eWE62LP4K.IAl7U7DO6	00:10:31.3	00:10:31.3
+9	re	re@re.fr	$2y$10$JzmL7qOnbQRdtqd49WWAHOfhjHa4t9hG6CUw8QcwHgBklAgdquZ/C	00:02:37.3	00:02:37.3
+10	test	t@t.t	$2y$10$TjxI6zyDRGMw.80n9UJc5OZZ/urCk7O2XQ0ygpas6FvHTltDre0ly	00:00:09.5	00:00:06.4
+11	kyoto	isaa@g.fr	$2y$10$7Al2J6kxGhGyK60hPfsjvu9fFdbiTr.mQFY7SmjrFltWNP1tONSya	\N	\N
+12	kyoto	isaac@a.fr	$2y$10$QXhsD8Cp3d9ma7xPnUfj/OCS0F.RKZv0TQuRVRWjLHmHa0LPzCtsW	\N	\N
+\.
+
+
+--
+-- TOC entry 4553 (class 0 OID 19653)
+-- Dependencies: 223
+-- Data for Name: objet; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.objet (id, nom_objet, "position", zoom, depart, fin, type, block, ajout, code, description, indice) FROM stdin;
+1	debut	0101000020E6100000A835CD3B4ED1024076E09C11A56D4840	13	t	f	HISTOIRE	\N	{2,3,4,5}	\N	Bienvenue à Drive to Escape ! Le trophée de F1 a été volé il y a quelques jours. Le gala de remise des prix a lieu aujourd’hui et tu es chargé de ramener le trophée à Jeddah le plus vite possible. Pour commencer ta mission, rends-toi chez le dernier champion du monde de Formule 1.\n	Rocher, yacht et luxe
+2	verstappen	0101000020E61000009EEFA7C64BB71D407593180456DE4540	13	f	f	HISTOIRE	\N	\N	\N	Hallo ! On m’a volé le trophée il y a quelques jours… Je n’ai aucune idée de qui a fait ça, mais j’ai des soupçons sur mon coéquipier. Je veux bien te prêter mon jet pour y aller, mais avant cela, tu dois te rendre dans mon pays d’origine. Là-bas, tu devras répondre à une question.	Je suis sous la mer
+3	jet	0101000020E61000006891ED7C3FB51D403BDF4F8D97DE4540	13	f	f	DEBLOQUANT	4	\N	\N		Dia de los muertos
+4	redbull	0101000020E6100000448B6CE7FB2912406F1283C0CA314A40	13	f	f	CODE	\N	\N	2016	En quelle année Verstappen remporte-t-il son premier GP ?	Il rejoint la F1 en 2015
+5	Atterrissage	0101000020E6100000E7FBA9F1D2C558C0F4FDD478E9663340	13	f	f	BLOQUE	3	{6,7,8}	\N		
+6	Checo	0101000020E6100000E7FBA9F1D2C558C0F4FDD478E9663340	13	f	f	HISTOIRE	\N	\N	\N	Hola ! Désolé, je n’ai pas le trophée… j’aurais bien aimé pourtant. Je pense que Lewis sait où il se trouve : il l’a quand même gardé 7 fois chez lui.	Le premier GP de l’histoire a eu lieu chez moi 
+7	Hamilton	0101000020E61000001283C0CAA145F0BFF0A7C64B37094A40	13	f	f	BLOQUE	8	{9,10,11}	\N	Hey ! On m’a volé mon chien, je ne te dirai rien tant qu’on ne me l’aura pas rendu. C’est le patron de Ferrari qui me l’a volé pour que je signe chez eux, j’en suis sûr !	Curva Parabolica
+8	Roscoe	0101000020E610000014AE47E17A942240736891ED7CCF4640	13	f	f	DEBLOQUANT	\N	\N	\N	Wouf !	
+9	Hamilton	0101000020E61000001283C0CAA145F0BFF0A7C64B37094A40	13	f	f	HISTOIRE	\N	\N	\N	Thanks mate ! Je ne peux pas te rendre le trophée, mais je sais qu’Ocon l’a volé… Il l’a ramené sur le circuit de sa première victoire !	Perle du Danube
+10	Ocon	0101000020E61000000000000000403340B4C876BE9FCA4740	13	f	f	BLOQUE	11	{12,13}	\N	Désolé… Je voulais savoir ce que ça faisait d’être champion du monde. Je veux bien te dire où j’ai caché le trophée, mais il faut me ramener le casque de mon meilleur ami.	Tabarnak
+11	casque	0101000020E61000009A999999996152C054E3A59BC4C04640	13	f	f	DEBLOQUANT	\N	\N	\N		
+12	Ocon	0101000020E61000000000000000403340B4C876BE9FCA4740	13	f	f	HISTOIRE	\N	\N	\N	Bien joué… Le trophée est à Singapour, mais il est bloqué par un code.	
+13	f1	0101000020E6100000E5D022DBF9F659400E2DB29DEFA7F43F	13	f	f	CODE	\N	{14,15}	1950	En quelle année a lieu le premier GP de l’histoire de la F1 ?	Farina remporte ce GP
+14	coupe	0101000020E6100000E5D022DBF9F659400E2DB29DEFA7F43F	13	f	f	DEBLOQUANT	\N	\N	\N	Bravo ! Il faut ramener le trophée au gala maintenant !	
+15	vitrine	0101000020E61000005A643BDF4F8D43406F1283C0CAA13540	13	f	f	BLOQUE	14	{16}	\N	\N	\N
+16	fin	0101000020E61000005A643BDF4F8D43406F1283C0CAA13540	13	f	t	HISTOIRE	\N	\N	\N	Bravo, tu as réussi à sauver le gala !	\N
+\.
+
+
+--
+-- TOC entry 4392 (class 0 OID 17793)
+-- Dependencies: 217
+-- Data for Name: spatial_ref_sys; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4560 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: joueurs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.joueurs_id_seq', 12, true);
+
+
+-- Completed on 2024-11-19 19:50:05 CET
+
+--
+-- PostgreSQL database dump complete
+--
+
