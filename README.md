@@ -10,7 +10,7 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 
 - **Postgres** avec l'extension **postgis**
 - **PgAdmin** 
-- **MAMP**
+- **MAMP** (PHP version : 7.4.33)
 - **GeoServer**
 
 ---
@@ -19,10 +19,10 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 
 #### 1. **PgAdmin** 🗄️
 - **Étape 1** : Créez une base de données vide nommée **map**
-- **Étape 2** : 
+- **Étape 2** : Ouvrez 
 
 
-- Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **9** et **10** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**.
+- Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **10** et **11** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**. Pensez également à vérifier que le **port** correspond au **port** de **Postgres**. Il faudra modifier la ligne **9** sinon.
 
 ✨ **PgAdmin, c'est fait !** ✨
 

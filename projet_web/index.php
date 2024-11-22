@@ -6,10 +6,11 @@ require_once 'flight/Flight.php';
 
 define('DB_HOST', 'localhost'); 
 define('DB_NAME', 'map'); 
+define('DB_PORT', '5433'); 
 define('DB_USER', 'postgres'); 
 define('DB_PASS', 'postgres'); 
 
-$connection_string = "host=" . DB_HOST . " dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
+$connection_string = "host=" . DB_HOST . " port=" . DB_PORT . " dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
 $conn = pg_connect($connection_string);
 
 if (!$conn) {
