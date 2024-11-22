@@ -11,7 +11,7 @@
 
 <header>
     <h1><i class="bi bi-clipboard"></i> Règles du jeu</h1>
-    <a href="/" class="back-button">
+    <a href="menu" class="back-button">
         <i class="bi bi-house"></i> Retour au menu
     </a>
 </header>

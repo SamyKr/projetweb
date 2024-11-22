@@ -1,0 +1,22 @@
+<layer>
+  <name>objet</name>
+  <id>LayerInfoImpl-7d667f27:192d3078545:-7ffc</id>
+  <type>VECTOR</type>
+  <defaultStyle>
+    <id>StyleInfoImpl-7d667f27:192d3078545:-7ffb</id>
+  </defaultStyle>
+  <styles class="linked-hash-set">
+    <style>
+      <id>StyleInfoImpl-7d667f27:192d3078545:-7ffb</id>
+    </style>
+  </styles>
+  <resource class="featureType">
+    <id>FeatureTypeInfoImpl-7d667f27:192d3078545:-7ffd</id>
+  </resource>
+  <attribution>
+    <logoWidth>0</logoWidth>
+    <logoHeight>0</logoHeight>
+  </attribution>
+  <dateCreated>2024-10-28 12:22:39.842 UTC</dateCreated>
+  <dateModified>2024-10-28 14:28:55.648 UTC</dateModified>
+</layer>
