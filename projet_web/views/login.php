@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
-    <link rel="stylesheet" href="../assets/style_login.css">
+    <link rel="stylesheet" href="../assets/general.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+ body{
+    background-image: url('../data/image/net_bg.jpg') !important;
+}
+</style>
 </head>
 <body>
     <div class="container">
@@ -19,7 +24,7 @@
                         <?php if (isset($_SESSION['error'])): ?>
                             <div class="alert alert-danger" role="alert">
                                 <?php echo $_SESSION['error']; ?>
-                                <?php unset($_SESSION['error']); // Effacez le message après l'affichage ?>
+                                <?php unset($_SESSION['error']);?>
                             </div>
                         <?php endif; ?>
 

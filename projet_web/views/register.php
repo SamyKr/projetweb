@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créer un compte</title>
-    <link rel="stylesheet" href="../assets/style_menu.css">
+    <link rel="stylesheet" href="assets/general.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+ body{
+    background-image: url('data/image/flou_bg.jpg') !important;
+}
+</style>
 </head>
 <body>
     <div class="container">
