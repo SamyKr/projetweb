@@ -1,3 +1,36 @@
+/* Réinitialisation des marges et des paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    background-image: url('../data/image/menubg.png'); /* Ajout de l'image de fond */
+    background-size: cover; /* L'image couvre toute la surface */
+    background-position: center center; /* L'image est centrée */
+    background-attachment: fixed; /* L'image reste fixe lors du défilement */
+}
+
+/* Entête */
+header {
+    background-color: #c8102e;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 i {
+    margin-right: 10px;
+}
+
+h2 {
+    color: #cc0000; /* Rouge foncé pour le titre */
+}
 
 
 .content {
