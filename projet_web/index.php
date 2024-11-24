@@ -211,7 +211,7 @@ Flight::route('GET /menu', function(){
 
         // Si le Hall of Fame est vide
         if (empty($hallOfFame)) {
-            Flight::render('resultat', ['message' => 'Aucun résultat trouvé dans le Hall of Fame.']);
+            Flight::render('menu', ['message' => 'Aucun résultat trouvé dans le Hall of Fame.']);
             return;
         }
 
