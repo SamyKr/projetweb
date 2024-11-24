@@ -8,10 +8,11 @@ Bienvenue sur notre jeu **Drive to Escape** ! 🚗💨
 
 Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 
-- **Postgres** avec l'extension **postgis**
+- **Postgres** avec l'extension **postgis** (port 5432 par défaut)
 - **PgAdmin** 
 - **MAMP** (PHP version 7.4.33)
-- **GeoServer**
+- **GeoServer** 
+- **Mozilla ou Chrome**
 
 ---
 
