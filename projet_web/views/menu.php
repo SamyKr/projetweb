@@ -28,14 +28,25 @@
 
     <!-- Bloc de texte pour les règles du jeu -->
     <div class="rules-block mt-4">
-        <h2><i class="bi bi-file-earmark-text"></i> Règles du jeu</h2>
+        <h2><i class="bi bi-file-earmark-text"></i> But du jeu</h2>
         <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt libero ac quam elementum, non cursus est iaculis. Fusce nec nunc id felis tincidunt convallis. Integer sollicitudin sit amet purus sit amet fringilla. Curabitur pretium tortor et lectus tempus, a lacinia velit dignissim. Aliquam erat volutpat. Nam quis turpis eget orci placerat fermentum. Fusce malesuada urna vel tortor laoreet, a dapibus felis gravida. Ut viverra turpis quis orci dictum vehicula. Donec vel risus euismod, blandit risus vel, vehicula tortor.
+        Bienvenue à Drive to Escape ! Le trophée de F1 a été volé il y a quelques jours. Le gala de remise des prix a lieu aujourd’hui et tu es chargé de ramener le trophée à Jeddah le plus vite possible. Pour commencer ta mission, rends-toi chez le dernier champion du monde de Formule 1.
+        </p>
+        <h2><i class="bi bi-controller"></i> Comment jouer ?</h2>
+        <p>
+        Tu vas te balader de popup en popup à travers le monde. N'oublie pas de lire tous les textes. Pour débloquer certains objets, il te faudra sélectionner un objet dans ton inventaire puis cliquer sur 'Débloquer' sur l'objet qui est bloqué. Certains codes peuvent également débloquer un objet, même s'il n'est pas juste à côté.
+Bon jeu !
         </p>
     </div>
 
+
     <div class="button-group">
-        <a href="/jeu" class="btn btn-large">Jouer</a>
+        <!-- Si la session contient un pseudo, afficher le bouton "Rejouer", sinon afficher "Jouer" -->
+        <?php if (isset($_SESSION['pseudo'])): ?>
+            <a href="/jeu" class="btn btn-primary">Rejouer</a>
+        <?php else: ?>
+            <a href="/jeu" class="btn btn-lg btn-secondary">Jouer</a>
+        <?php endif; ?>
 
         <?php if (isset($_SESSION['user_id']) || isset($_COOKIE['user_id'])): ?>
             <!-- Bouton de déconnexion si l'utilisateur est connecté -->
@@ -84,12 +95,7 @@
         </div>
     </div>
 
-    <!-- Bouton pour rejouer uniquement si l'utilisateur est connecté -->
-    <div class="text-center mt-4">
-        <?php if (isset($_SESSION['pseudo'])): ?>
-            <a href="/jeu" class="btn btn-primary">Rejouer</a>
-        <?php endif; ?>
-    </div>
+    
 </div>
 
 <!-- Optionnel : ajout du script Bootstrap pour les fonctionnalités dynamiques -->

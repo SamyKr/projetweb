@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="assets/popup.css">
+    <!-- Ajout de Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
 </head>
 
 <body>
     <div id="app">
-            <header class="bg-danger text-white text-center py-3">
-            <h1>Drive to Escape</h1>
+        <header class="text-white text-center py-3">
+            <h1><i class="bi bi-joystick"></i> Formula 1: Drive to Escape </h1>
             <div>
                 <label>
                     <input type="checkbox" @change="toggleHeatmap" />
@@ -22,33 +24,35 @@
             </div>
 
             <div class="mt-2">
+                <i class="bi bi-person-circle"></i> 
                 <span><?= htmlspecialchars($_SESSION['pseudo']) ?> - Temps écoulé : {{ formatTime(elapsedTime) }}</span> 
             </div>
-
         </header>
         <div class="d-flex">
             <div id="map" class="flex-grow-1"></div>
         </div>
+
         <div class="text-center my-2">
-            <button @click="toggleInventory" id="actionButton" class="btn btn-info">
-                {{ isInventoryVisible ? '⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️' : '⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️⬆️' }}
+            <!-- Le bouton est maintenant placé juste au-dessus de l'inventaire -->
+            <button @click="toggleInventory" id="actionButton" class="btn btn-sm">
+                <!-- Flèches dynamiques pour le bouton -->
+                <i v-if="!isInventoryVisible" class="bi bi-caret-up-fill"></i>
+                <i v-if="isInventoryVisible" class="bi bi-caret-down-fill"></i>
             </button>
         </div>
 
-                    <transition name="fade">
-                        <div v-if="isInventoryVisible" class="inventory p-3">
-                        <ul class="list-group">
-            <li class="list-group-item" 
-                v-for="(item, index) in items" 
-                :key="index" 
-                :style="{ backgroundColor: item.backgroundColor }" 
-                @click="selectItem(index)" 
-            >
-                <img :src="item.src" :alt="item.alt" class="img-fluid" :style="{ border: item.border }" />
-            </li>
-</ul>
 
-
+        <transition name="fade">
+            <div v-if="isInventoryVisible" class="inventory p-3">
+                <ul class="list-group">
+                    <li class="list-group-item" 
+                        v-for="(item, index) in items" 
+                        :key="index" 
+                        :style="{ backgroundColor: item.backgroundColor }" 
+                        @click="selectItem(index)" 
+                    >
+                        <img :src="item.src" :alt="item.alt" class="img-fluid" :style="{ border: item.border }" />
+                    </li>
                 </ul>
             </div>
         </transition>

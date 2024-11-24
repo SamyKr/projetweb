@@ -1,7 +1,7 @@
 /* Styles pour les popups */
 .popup-content {
   background-color: white; /* Couleur de fond */
-  border: 2px solid #007bff; /* Bordure bleue */
+  border: 2px solid #c8102e; /* Bordure rouge correspondant à la couleur du menu */
   border-radius: 10px; /* Coins arrondis */
   padding: 15px; /* Espacement interne */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre */
@@ -12,7 +12,7 @@
 
 /* Styles pour les boutons */
 .popup-content button {
-  background-color: #007bff; /* Couleur de fond des boutons */
+  background-color: #c8102e; /* Couleur de fond des boutons */
   color: white; /* Couleur du texte */
   border: none; /* Pas de bordure */
   border-radius: 5px; /* Coins arrondis des boutons */
@@ -20,11 +20,15 @@
   cursor: pointer; /* Curseur en forme de main */
   margin-top: 10px; /* Marge au-dessus des boutons */
   transition: background-color 0.3s; /* Transition pour le changement de couleur */
+  display: block; /* Permet au bouton de se comporter comme un bloc */
+  margin-left: auto; /* Aligne le bouton à gauche */
+  margin-right: auto; /* Aligne le bouton à droite */
+  width: 100%; /* Occupe toute la largeur disponible */
 }
 
 /* Effet de survol sur les boutons */
 .popup-content button:hover {
-  background-color: #0056b3; /* Couleur de fond lors du survol */
+  background-color: #9c0e25; /* Couleur de fond lors du survol (plus foncé) */
 }
 
 /* Styles pour l'input de code */
@@ -39,7 +43,7 @@
 
 /* Styles pour les messages d'alerte */
 .popup-content .alert {
-  color: red; /* Couleur du texte d'alerte */
+  color: #c8102e; /* Couleur rouge correspondant à la couleur du menu */
   font-weight: bold; /* Texte en gras */
   margin-top: 10px; /* Marge au-dessus de l'alerte */
 }
