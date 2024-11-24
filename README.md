@@ -10,7 +10,7 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 
 - **Postgres** avec l'extension **postgis**
 - **PgAdmin** 
-- **MAMP**
+- **MAMP** (PHP version 7.4.33)
 - **GeoServer**
 
 ---
@@ -22,7 +22,7 @@ Pour jouer, assurez-vous d'avoir installé les éléments suivants :
 - **Étape 2** : Ouvrez QueryTool et copiez collez le fichier table.sql
 
 
-- Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **9** et **10** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**.
+- Vérifiez que **user** est **postgres** et que votre **password** est également **postgres**. Dans le cas contraire il faudra modifier les lignes **9** et **10** du fichier **`projet_web/index.php`** et remplacer votre **user** ainsi que votre **password**. Pensez également à vérifier le **port** utilisé par Postgres.
 
 ✨ **PgAdmin, c'est fait !** ✨
 
