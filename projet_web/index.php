@@ -26,7 +26,7 @@ session_start();
 Flight::set('conn', $conn);
 
 Flight::route('GET /', function() {
-    Flight::render('menu');
+    Flight::redirect('/menu');
 });
 
 Flight::route('/login', function() use ($conn) {
