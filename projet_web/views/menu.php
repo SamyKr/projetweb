@@ -34,7 +34,7 @@
         </p>
         <h2><i class="bi bi-controller"></i> Comment jouer ?</h2>
         <p>
-        Tu vas te balader de popup en popup à travers le monde. N'oublie pas de lire tous les textes. Pour débloquer certains objets, il te faudra sélectionner un objet dans ton inventaire puis cliquer sur 'Débloquer' sur l'objet qui est bloqué. Certains codes peuvent également débloquer un objet, même s'il n'est pas juste à côté.
+        Tu vas te balader de popup en popup à travers le monde. N'oublie pas de lire tous les textes. Pour débloquer certains objets, il te faudra sélectionner un objet dans ton inventaire puis cliquer sur 'Débloquer' sur l'objet qui est bloqué. Certains codes peuvent également débloquer un objet, même s'il n'est pas juste à côté. Si jamais tu rencontres des difficultés, tu peux activer le mode triche. Le temps passera deux fois plus vite, mais tu pourras voir où se trouvent les objets à chercher.
 Bon jeu !
         </p>
     </div>
