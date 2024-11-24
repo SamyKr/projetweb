@@ -14,7 +14,7 @@ html, body {
 }
 
 header {
-    background-color: #c8102e; /* Rouge #c8102e */
+    background-color: #c8102e !important; 
     color: white;
     padding: 20px;
     text-align: center;

@@ -6,7 +6,7 @@ require_once 'flight/Flight.php';
 
 define('DB_HOST', 'localhost'); 
 define('DB_NAME', 'map'); 
-define('DB_PORT', '5433'); 
+define('DB_PORT', '5432'); 
 define('DB_USER', 'postgres'); 
 define('DB_PASS', 'postgres'); 
 
@@ -161,7 +161,7 @@ Flight::route('POST /save-time', function() use ($conn) {
 Flight::route('GET /jeu', function() {
     if (!isset($_SESSION['user_id']) && !isset($_COOKIE['user_id'])) {
         // Si l'utilisateur n'est pas connecté, redirige vers la page de connexion
-        Flight::redirect('/login');
+        Flight::redirect('/register');
     } else {
         // Si connecté, afficher le jeu
         Flight::render('jeu');
