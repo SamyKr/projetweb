@@ -6,10 +6,11 @@ require_once 'flight/Flight.php';
 
 define('DB_HOST', 'localhost'); 
 define('DB_NAME', 'map'); 
+define('DB_PORT', '5433'); 
 define('DB_USER', 'postgres'); 
 define('DB_PASS', 'postgres'); 
 
-$connection_string = "host=" . DB_HOST  ." dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
+$connection_string = "host=" . DB_HOST . " port=" . DB_PORT . " dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
 $conn = pg_connect($connection_string);
 
 if (!$conn) {
@@ -149,7 +150,7 @@ Flight::route('POST /save-time', function() use ($conn) {
     $dernier_score = $scoreActuelData['score'] ?? null;
 
     // Rendu de la page de résultats avec le Hall of Fame et le dernier score
-    Flight::render('resultat', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
+    Flight::render('menu', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
 });
 
 
@@ -168,28 +169,20 @@ Flight::route('GET /jeu', function() {
 });
 
 
-
-Flight::route('GET /regles', function() {
-    Flight::render('regles');
-});
-
 Flight::route('GET /login', function() {
     Flight::render('login');
 });
 
-Flight::route('GET /menu', function() {
-    Flight::render('menu');
-});
 
 
 
-Flight::route('GET /resultat', function(){
+Flight::route('GET /menu', function(){
     try {
         // Connexion à la base de données
         $conn = Flight::get('conn');
         
         // Préparer la requête pour récupérer les données du Hall of Fame
-        $query = "SELECT id, pseudo, highscore FROM joueurs ORDER BY highscore ASC LIMIT 10"; // Limite les 10 meilleurs scores
+        $query = "SELECT id, pseudo, highscore FROM joueurs WHERE highscore IS NOT NULL ORDER BY highscore ASC LIMIT 10"; // Limite les 10 meilleurs scores
 
         // Exécuter la requête
         $result = pg_query($conn, $query);
@@ -201,16 +194,20 @@ Flight::route('GET /resultat', function(){
         // Récupérer les résultats sous forme de tableau
         $hallOfFame = pg_fetch_all($result);
 
-        // Récupérer le dernier score ajouté (le score actuel)
-        $queryScoreActuel = "SELECT highscore FROM joueurs ORDER BY id ASC LIMIT 1"; // On récupère le dernier score ajouté
-        $resultScoreActuel = pg_query($conn, $queryScoreActuel);
-        
-        if (!$resultScoreActuel) {
-            throw new Exception('Erreur lors de la récupération du score actuel : ' . pg_last_error($conn));
-        }
+        // Vérifier si l'utilisateur est connecté
+        $dernier_score = null;
+        if (isset($_SESSION['user_id'])) {
+            // Si l'utilisateur est connecté, récupérer son dernier score
+            $queryScoreActuel = "SELECT score FROM joueurs WHERE id = $1";
+            $resultScoreActuel = pg_query_params($conn, $queryScoreActuel, [$_SESSION['user_id']]);
+            
+            if (!$resultScoreActuel) {
+                throw new Exception('Erreur lors de la récupération du score actuel : ' . pg_last_error($conn));
+            }
 
-        $scoreActuelData = pg_fetch_assoc($resultScoreActuel);
-        $dernier_score = $scoreActuelData['highscore'] ?? null;
+            $scoreActuelData = pg_fetch_assoc($resultScoreActuel);
+            $dernier_score = $scoreActuelData['score'] ?? null;
+        }
 
         // Si le Hall of Fame est vide
         if (empty($hallOfFame)) {
@@ -218,13 +215,14 @@ Flight::route('GET /resultat', function(){
             return;
         }
 
-        // Afficher la page HTML avec les données du Hall of Fame et le dernier score
-        Flight::render('resultat', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
+        // Afficher la page HTML avec les données du Hall of Fame et le dernier score si connecté
+        Flight::render('menu', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
     } catch (Exception $e) {
         // Gestion des erreurs
-        Flight::render('resultat', ['error' => 'Erreur lors de la récupération des données : ' . $e->getMessage()]);
+        Flight::render('menu', ['error' => 'Erreur lors de la récupération des données : ' . $e->getMessage()]);
     }
 });
+
 
 
 

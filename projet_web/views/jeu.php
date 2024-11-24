@@ -22,7 +22,7 @@
             </div>
 
             <div class="mt-2">
-                <span>Temps écoulé : {{ formatTime(elapsedTime) }}</span> 
+                <span><?= htmlspecialchars($_SESSION['pseudo']) ?> - Temps écoulé : {{ formatTime(elapsedTime) }}</span> 
             </div>
 
         </header>

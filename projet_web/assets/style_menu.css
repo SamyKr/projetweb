@@ -1,59 +1,190 @@
-/* Style général pour le corps */
+/* Réinitialisation des marges et des paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
 body {
-    background-color: #f8f8f8; /* Fond léger */
-    color: #333; /* Couleur du texte */
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centre horizontalement */
-    height: 100vh; /* Hauteur de la vue */
-    padding: 20px; /* Espacement autour de la page */
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    background-image: url('../data/image/menubg.png'); /* Ajout de l'image de fond */
+    background-size: cover; /* L'image couvre toute la surface */
+    background-position: center center; /* L'image est centrée */
+    background-attachment: fixed; /* L'image reste fixe lors du défilement */
 }
 
-/* Style pour l'en-tête */
+/* Entête */
 header {
-    background-color: #c8102e; /* Rouge vif */
-    color: #fff; /* Texte blanc */
+    background-color: #c8102e; /* Rouge #c8102e */
+    color: white;
     padding: 20px;
-    width: 100%;
-    text-align: center; /* Centrage du texte */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Ombre légère */
-    margin-bottom: 20px; /* Espace sous l'en-tête */
-    margin-top: 20px; /* Espace au-dessus de l'en-tête */
+    text-align: center;
 }
 
-/* Style pour le groupe de boutons */
+header h1 i {
+    margin-right: 10px;
+}
+
+/* Section content */
+.content {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Informations utilisateur */
+.user-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-info p {
+    font-size: 1.2em;
+}
+
+/* Groupes de boutons */
 .button-group {
     display: flex;
-    flex-direction: column; /* Aligne les boutons verticalement */
-    align-items: center; /* Centre les boutons horizontalement */
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-/* Style pour les boutons */
-.btn {
-    text-decoration: none; /* Pas de soulignement */
-    color: #fff; /* Couleur blanche pour le texte */
-    background-color: #c8102e; /* Couleur rouge pour le fond */
-    padding: 15px 30px; /* Espacement interne */
-    margin: 10px; /* Espace entre les boutons */
-    border-radius: 5px; /* Coins arrondis */
-    transition: background-color 0.3s; /* Transition pour l'effet au survol */
+.button-group .btn {
+    padding: 10px 20px;
+    text-align: center;
+    background-color: #c8102e; /* Rouge #c8102e */
+    color: white;
+    border: none;
+    text-decoration: none;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
 }
 
-/* Gros bouton pour le jeu */
-.btn-large {
-    font-size: 24px; /* Taille de police plus grande */
-    font-weight: bold; /* Texte en gras */
-    padding: 20px 40px; /* Espacement interne plus grand */
+.button-group .btn:hover {
+    background-color: #a30e26; /* Légèrement plus foncé au survol */
 }
 
-/* Bouton plus petit pour les règles */
-.btn-small {
-    font-size: 16px; /* Taille de police plus petite */
-    padding: 10px 20px; /* Espacement interne plus petit */
+/* Hall of Fame */
+#hallOfFame {
+    background-color: rgba(255, 255, 255, 0.8); /* Fond blanc avec 80% d'opacité */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    border-radius: 8px;
 }
 
-/* Effet au survol pour les boutons */
-.btn:hover {
-    background-color: #a30d24; /* Couleur plus foncée au survol */
+#hallOfFame h2 {
+    color: #c8102e; /* Rouge #c8102e */
+    margin-bottom: 20px;
+}
+
+/* Alertes */
+.alert {
+    margin-bottom: 20px;
+    background-color: #c8102e; /* Rouge #c8102e */
+    color: white;
+}
+
+/* Tableau du Hall of Fame */
+.table-responsive {
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #c8102e; /* Rouge #c8102e */
+    color: white;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+    background-color: #e1e1e1;
+}
+
+/* Bouton rejouer */
+.text-center a.btn-primary {
+    background-color: #c8102e;
+    border: none;
+    padding: 12px 24px;
+    text-decoration: none;
+    color: white;
+    font-size: 1.1em;
+}
+
+.text-center a.btn-primary:hover {
+    background-color: #a30e26; /* Légèrement plus foncé au survol */
+}
+
+/* Style pour le bloc des règles */
+.rules-block {
+    background-color: rgba(255, 255, 255, 0.8); /* Fond blanc avec 80% d'opacité */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    width: 80%; /* Largeur du bloc, ajustable selon tes besoins */
+    max-width: 800px; /* Limiter la largeur maximale */
+    margin-left: auto; /* Centrer horizontalement */
+    margin-right: auto; /* Centrer horizontalement */
+}
+
+/* Centrer le texte à l'intérieur du bloc */
+.rules-block h2 {
+    color: #c8102e; /* Rouge #c8102e */
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    text-align: center; /* Centrer le titre */
+}
+
+.rules-block p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center; /* Centrer le texte */
+}
+
+/* Ajouter une bordure au bas du bloc des règles */
+.rules-block p:last-child {
+    margin-bottom: 0;
+}
+
+/* Ajouter un style pour les listes dans les règles */
+.rules-block ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    text-align: left; /* Aligner les éléments de la liste à gauche */
+}
+
+/* Ajouter un style pour les éléments de la liste */
+.rules-block li {
+    margin-bottom: 10px;
+}
+
+/* Ajouter un fond légèrement coloré sur le bloc des règles au survol */
+.rules-block:hover {
+    background-color: rgba(250, 250, 250, 0.9); /* Légèrement plus foncé au survol */
+    transition: background-color 0.3s ease;
+}
+
+/* Surbrillance de la ligne du tableau correspondant au joueur connecté */
+.highlight-row {
+    color: #9a8b02;
+    font-weight: bold;
 }
