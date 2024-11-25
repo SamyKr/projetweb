@@ -13,9 +13,11 @@
 </style>
 </head>
 <body>
+    <!-- Conteneur principal de la page de création de compte -->
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
+                <!-- Carte contenant le formulaire de création de compte -->
                 <div class="card mt-5">
                     <div class="card-body">
                         <h2 class="text-center">Créer un compte</h2>
@@ -24,7 +26,7 @@
                         <?php if (isset($_SESSION['error'])): ?>
                             <div class="alert alert-danger" role="alert">
                                 <?php echo $_SESSION['error']; ?>
-                                <?php unset($_SESSION['error']); // Effacez le message après l'affichage ?>
+                                <?php unset($_SESSION['error']); ?>
                             </div>
                         <?php endif; ?>
 
@@ -36,6 +38,7 @@
                             </div>
                         <?php endif; ?>
 
+                        <!-- Formulaire de création de compte -->
                         <form action="/register" method="post">
                             <div class="form-group">
                                 <label for="pseudo">Nom d'utilisateur</label>

@@ -2,7 +2,7 @@ new Vue({
   el: '#app',
   data() {
     return {
-      map: null, // Variable pour la carte
+      map: null, // Carte initiale
       isInventoryVisible: true, // Variable pour gérer l'affichage ou non de l'inventaire
       isHeatmapVisible: false, // Variable pour gérer l'affichage ou non de la carte de triche
       items: [ // Inventaire visuel de base
@@ -11,17 +11,15 @@ new Vue({
         { src: 'data/image/inventaire.png', alt: 'Emplacement vide 3' },
         { src: 'data/image/inventaire.png', alt: 'Emplacement vide 4' },
       ],
-      inventory: ["", "", "", ""], // Inventaire de base
-      elements_visible: [], // Images chargées de base
-      loadedObjectIds: [], // ID des objets chargés pour la carte de chaleur  
+      inventory: ["", "", "", ""], // Inventaire interne de base, utilisé pour stocker des objets
+      elements_visible: [], // Liste des éléments visibles sur la carte
+      loadedObjectIds: [], // Liste des IDs des objets chargés pour afficher la carte de chaleur  
       wmsLayer: null, // Variable pour initialiser la carte de triche
-      selectedItem: {
+      selectedItem: { // Objet pour gérer l'élément sélectionné dans l'inventaire
         index: null,
         id: null,
       },
-      elapsedTime: 0
-      //interval: null
-      //isRunning: false
+      elapsedTime: 0 // Temps écoulé pour le suivi du jeu ou d'autres événements (système de chronomètre)
     };
   },
 
@@ -38,7 +36,7 @@ new Vue({
         if (this.loadedObjectIds.length > 0) {
             map.addLayer(this.wmsLayer);
             this.isHeatmapVisible = true;
-            this.updateChronoSpeed(true); // Doubler la vitesse du chronomètre
+            this.updateChronoSpeed(true); // Double la vitesse du chronomètre
         } else {
             alert("Aucun objet chargé pour afficher la carte de chaleur !");
             event.target.checked = false;
@@ -108,18 +106,16 @@ new Vue({
 
     // Vérifie si l'objet est bloqué ou si l'ID de selectedItem correspond à l'ID de blocage de l'objet
     if (objectToAdd.block !== null && objectToAdd.block !== this.selectedItem.id) {
-        alert(`L'objet ${objectToAdd.nom_objet} est bloqué et ne peut pas être ajouté à l'inventaire. Débloquez-le d'abord.`);
+        alert(`L'objet ${objectToAdd.nom_objet} est bloqué. Débloquez-le d'abord.`);
         return; 
     }
 
     if (emptyIndex !== -1) {
         const unlockerIndex = this.inventory.findIndex(item => item.id === this.selectedItem.id);
         
-        console.log("avant suppression :", this.inventory);
         // Si un objet à remplacer a été trouvé, le remplacer par une chaîne vide
         if (unlockerIndex !== -1) {
             this.$set(this.inventory, unlockerIndex, ""); // Remplacer l'objet par une chaîne vide
-            console.log("après suppression :", this.inventory);
         }
 
         // Mettre à jour emptyIndex après la suppression
@@ -135,8 +131,6 @@ new Vue({
         this.updateUIinventory(); // Fait la liaison entre inventaire et items (qui gère les images)
         this.deleteObject(item); // Supprime l'objet de la carte
 
-
-        console.log("ici", typeof this.stringToArray(ajout))
         if (ajout !== 'null') {
           this.Ajout_objet(this.stringToArray(ajout));
         }
@@ -154,11 +148,6 @@ new Vue({
 // SELECTIONNER UN OBJET DANS L'INVENTAIRE
 
 selectItem(index) {
-  console.log(`Sélection d'un élément à l'index : ${index}`); // Log de l'index sélectionné
-
-  // Afficher l'état de l'inventaire avant la sélection
-  console.log("État de l'inventaire avant la sélection :", this.items);
-
   //const item = this.items[index]; // Obtenir l'élément correspondant à l'index sélectionné INUTILE MNT ?
   const inventoryItem = this.inventory[index]; // Obtenir l'élément de l'inventaire correspondant
 
@@ -189,9 +178,7 @@ selectItem(index) {
 
     // Mettre à jour l'élément sélectionné avec l'index et l'ID
     this.selectedItem = { index: index, id: inventoryItem ? inventoryItem.id : null }; 
-    console.log("État de selectedItem :", this.selectedItem); // Log pour vérifier
   }
-  console.log("État de selectedItem :", this.selectedItem); // Log pour vérifier
 },
 
 
@@ -227,14 +214,6 @@ checkCode(id, code, ajout) {
 ,
 
 
-
-
-
-
-    displayMessage(item) { // Normalement elle ne sert à rien
-      alert(`L'élément "${item}" est déjà dans l'inventaire !`);
-    },
-
     startChrono(ajout) {
         this.elapsedTime = 0; 
         this.timerInterval = setInterval(() => {
@@ -247,7 +226,6 @@ checkCode(id, code, ajout) {
 
 
     stopChrono() {
-      console.log("Arrêt du chrono");
       clearInterval(this.timerInterval);
       this.timerInterval = null;
    
@@ -357,8 +335,6 @@ checkCode(id, code, ajout) {
         return response.json();
       })
     .then(data => {
-      console.log("Données JSON analysées:", data);
-
       data.forEach(obj => {
         const latLng = [obj.latitude, obj.longitude];
         const imageSrc = `data/image/${obj.nom_objet}.png`;

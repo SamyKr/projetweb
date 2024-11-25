@@ -13,9 +13,11 @@
 </style>
 </head>
 <body>
+    <!-- Conteneur principal de la page de connexion -->
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
+                <!-- Carte affichant le formulaire de connexion -->
                 <div class="card mt-5">
                     <div class="card-body">
                         <h2 class="text-center">Connexion</h2>
@@ -28,6 +30,7 @@
                             </div>
                         <?php endif; ?>
 
+                        <!-- Formulaire de connexion -->
                         <form action="/login" method="post">
                             <div class="form-group">
                                 <label for="mail">Adresse e-mail</label>

@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-require_once 'flight/Flight.php';
+require_once 'flight/Flight.php'; // Inclusion du framework Flight pour gérer les routes et la gestion HTTP.
 
-define('DB_HOST', 'localhost'); 
+define('DB_HOST', 'localhost'); // Définition des constantes pour la connexion à la base de données
 define('DB_NAME', 'map'); 
 define('DB_PORT', '5432'); 
 define('DB_USER', 'postgres'); 
 define('DB_PASS', 'postgres'); 
 
+// Construction de la chaîne de connexion à la base de données PostgreSQL
 $connection_string = "host=" . DB_HOST . " port=" . DB_PORT . " dbname=" . DB_NAME . " user=" . DB_USER . " password=" . DB_PASS;
 $conn = pg_connect($connection_string);
 
+// Vérification de la connexion à la base de données
 if (!$conn) {
     exit("Erreur de connexion à la base de données : " . pg_last_error());
 } else {
@@ -20,8 +22,6 @@ if (!$conn) {
 }
 
 session_start();
-
-
 
 Flight::set('conn', $conn);
 
@@ -34,15 +34,15 @@ Flight::route('/login', function() use ($conn) {
         $mail = $_POST['mail'];
         $password = $_POST['password'];
 
-        // Access the global 'conn' service
+        // Vérification des informations d'identification de l'utilisateur
         $result = pg_query_params($conn, "SELECT * FROM joueurs WHERE mail = $1", [$mail]);
         $user = pg_fetch_assoc($result);
 
+        // Vérification du mot de passe
         if ($user && password_verify($password, $user['password'])) {
+            // Si authentification réussie, initialisation de la session et des cookies
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['pseudo'] = $user['pseudo'];
-
-            // Définir un cookie pour une connexion persistante (validité de 1 jour)
             setcookie('user_id', $user['id'], time() + 86400, '/'); // Expire dans 1 jour
             setcookie('pseudo', $user['pseudo'], time() + 86400, '/');
 
@@ -100,56 +100,45 @@ Flight::route('POST /save-time', function() use ($conn) {
 
     $time = $_POST['time'];
 
-    // Convertir le temps en minutes et secondes
+    // Convertir le temps en minutes, secondes et dixièmes
     $minutes = floor($time / 60);
-    $seconds = floor($time % 60); // Partie entière des secondes
-    $tenths = floor(($time - floor($time)) * 10); // Extraire les dixièmes
+    $seconds = floor($time % 60); 
+    $tenths = floor(($time - floor($time)) * 10); 
 
-    // Formater en chaîne "MM:SS.t"
     $formatted_time = sprintf('%02d:%02d.%d', $minutes, $seconds, $tenths);
 
-    // Enregistrer le score dans la base de données
     $query = "UPDATE joueurs SET score = $1 WHERE id = $2";
     pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
 
-    // Vérifiez si le nouveau score est meilleur que le highscore actuel
     $query = "SELECT highscore FROM joueurs WHERE id = $1";
     $result = pg_query_params($conn, $query, [$_SESSION['user_id']]);
     $currentHighscoreData = pg_fetch_assoc($result);
     $currentHighscore = $currentHighscoreData['highscore'];
 
-    // Comparer les temps pour savoir si le nouveau score est meilleur
-    // Convertir les temps en secondes pour faciliter la comparaison
     $newScoreInSeconds = $minutes * 60 + $seconds + $tenths / 10;
 
     if ($currentHighscore) {
-        // Convertir le highscore existant en secondes
         preg_match('/(\d+):(\d+)\.(\d+)/', $currentHighscore, $matches);
         $currentHighscoreInSeconds = $matches[1] * 60 + $matches[2] + $matches[3] / 10;
-        
-        // Si le nouveau score est meilleur, on le met à jour
+    
         if ($newScoreInSeconds < $currentHighscoreInSeconds) {
             $query = "UPDATE joueurs SET highscore = $1 WHERE id = $2";
             pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
         }
     } else {
-        // Si aucun highscore n'existe, on l'ajoute
         $query = "UPDATE joueurs SET highscore = $1 WHERE id = $2";
         pg_query_params($conn, $query, [$formatted_time, $_SESSION['user_id']]);
     }
 
-    // Récupérer les données pour le Hall of Fame
     $query = "SELECT id, pseudo, highscore FROM joueurs WHERE highscore IS NOT NULL ORDER BY highscore ASC LIMIT 10";
     $result = pg_query($conn, $query);
     $hallOfFame = pg_fetch_all($result);
 
-    // Récupérer le score actuel de l'utilisateur
     $queryScoreActuel = "SELECT score FROM joueurs WHERE id = $1";
     $resultScoreActuel = pg_query_params($conn, $queryScoreActuel, [$_SESSION['user_id']]);
     $scoreActuelData = pg_fetch_assoc($resultScoreActuel);
     $dernier_score = $scoreActuelData['score'] ?? null;
 
-    // Rendu de la page de résultats avec le Hall of Fame et le dernier score
     Flight::render('menu', ['hall_of_fame' => $hallOfFame, 'dernier_score' => $dernier_score]);
 });
 

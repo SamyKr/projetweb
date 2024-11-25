@@ -12,6 +12,7 @@
 <body>
 
 <header>
+    <!-- Titre du jeu avec une icône joystick -->
     <h1><i class="bi bi-joystick"></i> Formula 1: Drive to Escape </h1>
 </header>
 
@@ -39,12 +40,13 @@ Bon jeu !
         </p>
     </div>
 
-
+    <!-- Groupe de boutons pour démarrer ou rejouer et se déconnecter -->
     <div class="button-group">
-        <!-- Si la session contient un pseudo, afficher le bouton "Rejouer", sinon afficher "Jouer" -->
         <?php if (isset($_SESSION['pseudo'])): ?>
+            <!-- Bouton Rejouer si l'utilisateur est connecté -->
             <a href="/jeu" class="btn btn-primary">Rejouer</a>
         <?php else: ?>
+            <!-- Bouton Jouer si l'utilisateur n'est pas encore connecté -->
             <a href="/jeu" class="btn btn-lg btn-secondary">Jouer</a>
         <?php endif; ?>
 
@@ -54,18 +56,18 @@ Bon jeu !
         <?php endif; ?>
     </div>
 
-    <!-- Hall of Fame intégré -->
+    <!-- Section Hall of Fame -->
     <div id="hallOfFame" class="mt-4">
         <h2 class="text-center"><i class="bi bi-trophy"></i> Hall of Fame</h2>
 
-        <!-- Affichage du dernier score -->
+        <!-- Affichage du dernier score (si disponible) -->
         <?php if (isset($dernier_score) && isset($_SESSION['pseudo'])): ?>
             <div class="alert alert-success text-center">
                 <strong>Dernier score :</strong> <?= htmlspecialchars($_SESSION['pseudo']) ?> - <?= htmlspecialchars($dernier_score) ?> secondes
             </div>
         <?php endif; ?>
 
-        <!-- Tableau du Hall of Fame -->
+        <!-- Tableau des scores du Hall of Fame -->
         <div class="table-responsive mt-4">
             <table class="table table-striped">
                 <thead>
@@ -98,7 +100,6 @@ Bon jeu !
     
 </div>
 
-<!-- Optionnel : ajout du script Bootstrap pour les fonctionnalités dynamiques -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 
